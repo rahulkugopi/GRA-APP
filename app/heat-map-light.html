@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>GXSquare Trade with trust.</title>
+  <link rel="icon" href="assets/img/favicon.png" type="image/x-icon">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+  <header class="light-bb">
+    <nav class="navbar navbar-expand-lg">
+      <a class="navbar-brand" href="exchange-light.html"><img src="assets/img/logo-dark.svg" alt="logo"></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#headerMenu"
+        aria-controls="headerMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="icon ion-md-menu"></i>
+      </button>
+
+      <div class="collapse navbar-collapse" id="headerMenu">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="index.html" role="button" data-toggle="dropdown" aria-haspopup="true"
+              aria-expanded="false">
+              Home
+            </a>
+
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
+              aria-expanded="false">
+              Exchange
+            </a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="exchange-light.html">Exchange</a>
+              <a class="dropdown-item" href="exchange-light-live-price.html">Exchange Live Price</a>
+              <a class="dropdown-item" href="exchange-light-ticker.html">Exchange Ticker</a>
+              <a class="dropdown-item" href="exchange-light-fluid.html">Exchange Fluid</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
+              aria-expanded="false">
+              Markets
+            </a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="markets-light.html">Markets</a>
+              <a class="dropdown-item" href="market-capital-light.html">Markets Line</a>
+              <a class="dropdown-item" href="market-capital-bar-light.html">Markets Bar</a>
+              <a class="dropdown-item" href="market-overview-light.html">Market Overview</a>
+              <a class="dropdown-item" href="market-screener-light.html">Market Screener</a>
+              <a class="dropdown-item" href="market-crypto-light.html">Market Crypto</a>
+            </div>
+          </li>
+
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
+              aria-expanded="false">
+              Others
+            </a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="technical-analysis-light.html">Technical Analysis</a>
+              <a class="dropdown-item" href="cross-rates-light.html">Cross Rates</a>
+              <a class="dropdown-item" href="symbol-info-light.html">Symbol Info</a>
+              <a class="dropdown-item" href="heat-map-light.html">Heat Map</a>
+
+            </div>
+          </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+          <a href="signin-light.html" class="btn-1">Sign In</a>
+          <a href="signup-light.html" class="btn-2">Get Started</a>
+        </ul>
+      </div>
+    </nav>
+  </header>
+  <div class="container-fluid mtb15">
+    <div class="row">
+      <div class="col-md-12">
+        <!-- TradingView Widget BEGIN -->
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript"
+            src="https://s3.tradingview.com/external-embedding/embed-widget-forex-heat-map.js" async>
+              {
+                "width": "100%",
+                  "height": 900,
+                    "currencies": [
+                      "EUR",
+                      "USD",
+                      "JPY",
+                      "GBP",
+                      "CHF",
+                      "AUD",
+                      "CAD",
+                      "NZD",
+                      "SEK",
+                      "NOK",
+                      "DKK",
+                      "HKD"
+                    ],
+                      "isTransparent": false,
+                        "colorTheme": "light",
+                          "locale": "en"
+              }
+            </script>
+        </div>
+        <!-- TradingView Widget END -->
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/jquery-3.4.1.min.js"></script>
+  <script src="assets/js/popper.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/amcharts-core.min.js"></script>
+  <script src="assets/js/amcharts.min.js"></script>
+  <script src="assets/js/Chart.bundle.min.js"></script>
+  <script src="assets/js/custom.js"></script>
+</body>
+
+</html>

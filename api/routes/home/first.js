@@ -11,7 +11,7 @@ router.post('/first/', async (req,res) => {
         header: req.body.header,
         content: req.body.content,
         image: req.body.image,
-        subItem: req.body.subItem
+        subitem: req.body.subitem
     });
    
     try {

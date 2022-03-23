@@ -19,12 +19,9 @@ const firstSchema = new mongoose.Schema({
         min:6,
         max:1024,
     },
-    subItem: {
-        type: String,
-        required: true,
-        min:6,
-        max:255
-    }
+    subitem: [{    
+        item:{ type: String, required: true }
+    }]
 });
 
 module.exports = mongoose.model('firstDetails', firstSchema);

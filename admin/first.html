@@ -11,6 +11,9 @@
 </head>
 
 <body>
+  <div class="loading-section" id="loader">
+    <div class="loader"></div>
+  </div>
   <header>
     <nav class="navbar navbar-expand-lg container">
       <a class="navbar-brand" href="index.html"><img src="assets/img/logo-dark.svg" alt="logo"></a>
@@ -25,7 +28,20 @@
             <a class="nav-link" href="index.html" role="button">
               Home
             </a>
-          </li>         
+          </li> 
+        </ul>
+        <ul class="navbar-nav pull-right">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
+              aria-expanded="false">
+              <img src="./assets/img/avatar.svg" width="35"/>
+              <span class="nav-user">Test User</span>
+            </a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="login.html">Logout</a>              
+            </div>
+          </li>
+        </ul>          
       </div>
     </nav>
   </header>
@@ -34,13 +50,66 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12 text-center">
-          <h2 class="hdr">Admin - Home - First</h2>    
+          <h2 class="hdr">First Section</h2>    
         </div>  
+        <div class="col-md-12">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="home.html">Home</a></li>
+              <li class="breadcrumb-item active" aria-current="page">First Section</li>
+            </ol>
+          </nav>
+        </div>
       </div>
       
-      <div class="row inner-grd">
-        First
-
+      <div class="inner-grd">       
+        <div class="row">
+          <div class="col-md-12">
+            <table class="table table-bordered">              
+              <tbody>
+                <tr>
+                  <td>
+                    <label>Header</label>
+                    <input type="text" class="form-control" id="header" disabled/>
+                  </td>
+                  <td>
+                    <label>Images</label>
+                    <input type="text" class="form-control" id="image" disabled/>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <label>Content</label>
+                    <input type="text" class="form-control" id="content" disabled/>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <div class="row">
+                      <div class="col-md-10">
+                        <label>Sub Item</label>
+                        <input type="text" class="form-control" id="add-item-input" disabled/>
+                        <div class="item-list">
+                          <ul id="item-list"></ul>
+                        </div>
+                      </div>
+                      <div class="col-md-2">
+                        <button type="button" class="btn-2 add-item-btn" id="add-item-btn" disabled>Add Item</button>
+                      </div>  
+                    </div>                                      
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <button type="button" class="btn-2" id="submit-btn">Submit</button>
+                    <button type="button" class="btn-2" id="edit-btn">Edit</button>
+                    <button type="button" class="btn-1" id="cancel-btn">Cancel</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>    
       </div>
       </div>
     </div>    
@@ -52,6 +121,127 @@
   <script src="assets/js/amcharts-core.min.js"></script>
   <script src="assets/js/amcharts.min.js"></script>
   <script src="assets/js/custom.js"></script>
-</body>
+  <script src="assets/js/SITEURL.js"></script>
 
+
+
+
+<script>
+$(document).ready(function(){
+
+  loadData();
+  $("#submit-btn").hide();
+  
+
+  function loadData(){
+    $.ajax({  
+      url: APIURL + 'home/first',  
+      type: 'GET',  
+      success: function(data) {  
+         $.each(data,function(index,res){
+            $("#loader").hide();
+            $("#item-list").html('');
+            $("#header").val(res.header);
+            $("#image").val(res.image);
+            $("#content").val(res.content);
+            $("#submit-btn").attr('data-id',res._id);
+            var itemList = "";
+            itemList +=""
+
+            $.each(res.subitem,function(index,val){
+              itemList +="<li id="+ val._id +"><span>"+ val.item +"</span> <button type='button' class='btn-2 btn-small'>Delete</button> <button type='button' class='btn-2 btn-small'>Edit</button></li>"                       
+            });  
+
+            $("#item-list").append(itemList);
+
+         })
+      },
+      error: function(error){
+        console.log(error)  
+      }  
+    });  
+  }
+
+  $("#add-item-btn").click(function(){
+      var itemList = "";
+      var addItems = $("#add-item-input").val();
+      if(addItems == ""){
+        $("#add-item-input").addClass('validation');
+        return;
+      }
+      itemList +="<li><span class='additem'>"+ addItems +"</span> <button type='button' class='btn-2 btn-small'>Delete</button> <button type='button' class='btn-2 btn-small'>Edit</button></li>";
+      $("#item-list").append(itemList);
+      $("#add-item-input").val('');
+  });
+
+  $("#edit-btn").click(function(){
+    $(this).hide();
+    inputCheck(false);
+    $("#submit-btn").show();
+  });
+
+  $("#cancel-btn").click(function(){
+    inputCheck(true);
+    $("#submit-btn").hide();
+    $("#edit-btn").show();
+  });
+
+  $("#submit-btn").click(function(){
+    var currentID = $(this).attr('data-id')
+    $("#loader").show();
+    $(this).hide();
+    inputCheck(true);
+    $("#submit-btn").show();
+
+    var arr = [];
+    
+    var header = $("#header").val();
+    var image = $("#image").val();
+    var content = $("#content").val();
+    var item ="";
+    var x = []
+    $("#item-list li").each(function(){
+      item = $(this).find('span.additem').text();      
+      var y = {}
+      if(item !=""){
+        y['item'] = item
+        arr.push(y)
+      }
+    });
+
+    var data = [{
+      'header': header, 
+      'content' : content, 
+      'image':image,
+      subitem :[{arr}]
+    }];
+
+    console.log(data)
+
+
+    $.ajax({  
+      url: APIURL + 'home/first',  
+      type: 'POST',  
+      data: myKeyVals,
+      success: function(data) {          
+        loadData()
+        $("#loader").hide();   
+      },
+      error: function(error){
+        console.log(error)  
+      }  
+    });      
+  });
+
+  function inputCheck(evt){
+    $("input , button").prop('disabled',evt);
+  }
+
+  $("input").keydown(function(){
+    $("input").removeClass('validation');
+  })
+
+});
+</script>  
+</body>
 </html>

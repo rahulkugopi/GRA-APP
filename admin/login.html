@@ -7,79 +7,65 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>GXSquare Trade with trust.</title>
   <link rel="icon" href="assets/img/favicon.png" type="image/x-icon">
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/login.css">
 </head>
 
 <body>
-  <header>
-    <nav class="navbar navbar-expand-lg container">
-      <a class="navbar-brand" href="index.html"><img src="assets/img/logo-dark.svg" alt="logo"></a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#headerMenu"
-        aria-controls="headerMenu" aria-expanded="false" aria-label="Toggle navigation">
-        <i class="icon ion-md-menu"></i>
-      </button>
 
-      <div class="collapse navbar-collapse" id="headerMenu">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item dropdown">
-            <a class="nav-link" href="index.html" role="button">
-              Home
-            </a>
-          </li>         
-      </div>
-    </nav>
-  </header>
 
-  <div class="inner-content">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12 text-center">
-          <h2 class="hdr">Admin - Home</h2>    
-        </div>  
-      </div>
-      
-      <div class="row inner-grd">
-        <div class="col-md-2">
-          <div class="grd">Menu Config</div>
+  <section class="main">
+
+    <div class="bottom-grid">
+        <div class="logo">
+            <h1><img src="assets/img/logo-dark.svg" alt="logo" width="250"></h1>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="text-center icon">
+            <span class="fa fa-meetup"></span>
         </div>
 
-        <div class="col-md-2">
-          <div class="grd">Banner Config</div>          
+        <div class="content-bottom">
+            <form action="#" method="post">
+                <div class="field-group">                    
+                    <div class="wthree-field">
+                        <input name="text1" id="text1" type="text" value="" placeholder="Username" required="">
+                    </div>
+                </div>
+                <div class="field-group">
+                    <div class="wthree-field">
+                        <input name="password" id="myInput" type="Password" placeholder="Password">
+                    </div>
+                </div>
+                <div class="wthree-field">
+                    <button type="submit" class="btn" onclick="location.href='index.html'">Sign in</button>
+                </div>
+                <ul class="list-login">                   
+                    <li>
+                        <a href="#" class="text-right">Forgot Password?</a>
+                    </li>
+                    <li class="clearfix"></li>
+                </ul>
+                <ul class="list-login-bottom">
+                    <li class="">
+                        <a href="#url" class="">Create Account</a>
+                    </li>
+                    <li class="clearfix"></li>
+                </ul>
+            </form>
         </div>
+    </div>
 
-        <div class="col-md-2">
-          <div class="grd">First section</div>          
-        </div>
+</section>
 
-        <div class="col-md-2">
-          <div class="grd">Second section</div>          
-        </div>
 
-        <div class="col-md-2">
-          <div class="grd">Third section</div>         
-        </div>
 
-        <div class="col-md-2">
-          <div class="grd">Four section</div>          
-        </div>
 
-        <div class="col-md-2">
-          <div class="grd">Five section</div>          
-        </div>
 
-        <div class="col-md-2">
-          <div class="grd">Six section</div>          
-        </div>
 
-        <div class="col-md-2">
-          <div class="grd">Footer section</div>
-          
-        </div>
 
-      </div>
-      </div>
-    </div>    
-  </div>
+
 
   <script src="assets/js/jquery-3.4.1.min.js"></script>
   <script src="assets/js/popper.min.js"></script>

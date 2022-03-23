@@ -11,15 +11,24 @@ body {
     font-weight: 400;
 }
 
+a{
+    color: #f45c24;
+}
+
 a,
 a:hover {
     text-decoration: none;
     transition: 0.3s;
+    color: #f45c24;
+}
+
+label{
+    margin:0px;
 }
 
 .hdr{
-    margin: 0;
-    border-bottom: solid 1px #f5f5f5;
+    margin: 0 0 15px 0;
+    font-size: 23px;
 }
 
 .grd{
@@ -37,6 +46,63 @@ a:hover {
     padding: 2em 0 2em 0;
 }
 
+.item-list{
+    padding: 10px 0 10px 0;
+}
+
+.item-list ul{
+    padding:0 0 0 15px;
+}
+
+.item-list ul li{
+    list-style-type: circle;
+    padding:10px 0 10px 0;
+}
+
+.add-item-btn{
+    margin:20px 0 0 0;
+}
+
+.nav-user{
+    margin:0 0 0 10px; 
+}
+
+.validation{
+    border:1px solid #dc3545;
+    box-shadow: -1px 2px 10px #ffd6da;
+}
+
+.loading-section{
+    position: absolute;
+    background: rgb(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loader {
+    border: 10px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 10px solid #3498db;
+    width: 70px;
+    height: 70px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+  }
+  
+  /* Safari */
+  @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
 
 ul,
 ol {
@@ -98,61 +164,6 @@ img {
     padding: 0;
 }
 
-html, body {
-    height:100%;
-    margin:0;
-    padding:0;
-}
-
-.carousel, .item, .active {
-    height:92vh;
-}
-.carousel-inner {
-    height:92vh;
-}
-
-.carousel-caption {
-    z-index: 10;
-}
-.carousel .carousel-item {
-    height:92vh;
-}
-
-.carousel .carousel-inner .bg {
-    background-repeat:no-repeat;
-    background-size:cover;
-}
-.carousel .carousel-inner .bg1 {
-    background-image:url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/158072/woman-camera.jpg');
-    background-position: center top;
-}
-.carousel .carousel-inner .bg2 {
-    background-image:url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/158072/hearthand.jpg');
-    background-position: center center;
-}
-
-.carousel-caption{
-    background: rgb(0, 0, 0, 0.6);
-    padding: 3em 30px 3em 30px;
-    width: 86%;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-}
-
-.carousel-caption h1{
-    font-size: 40px;
-    text-transform: uppercase;
-    font-weight: 600;
-}
-
-.carousel-caption p{
-    font-size: 16px;
-}
-
-.carousel-indicators{
-    bottom: 30px;
-}
 
 .grd-section{
     background-color: #f9f9f9;
@@ -284,6 +295,12 @@ tbody tr:hover {
     box-shadow: none;
 }
 
+.btn-small{
+    padding: 5px 15px!important;
+    font-size: 12px!important;
+    line-height: 12px!important;
+}
+
 .btn-1,
 .btn-2 {
     display: inline-block;
@@ -293,6 +310,8 @@ tbody tr:hover {
     border-radius: 5px;
     padding: 9px 25px;
     margin-left: 15px;
+    font-size: 14px;
+    line-height: 15px;
 }
 
 .btn-1:hover,

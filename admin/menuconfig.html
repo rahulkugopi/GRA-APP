@@ -25,7 +25,20 @@
             <a class="nav-link" href="index.html" role="button">
               Home
             </a>
-          </li>         
+          </li>   
+        </ul>
+        <ul class="navbar-nav pull-right">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
+              aria-expanded="false">
+              <img src="./assets/img/avatar.svg" width="35"/>
+              <span class="nav-user">Test User</span>
+            </a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="login.html">Logout</a>              
+            </div>
+          </li>
+        </ul>        
       </div>
     </nav>
   </header>
@@ -34,12 +47,72 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12 text-center">
-          <h2 class="hdr">Admin - Home - Menu Config</h2>    
+          <h2 class="hdr">Menu Config</h2>    
         </div>  
+        <div class="col-md-12">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="home.html">Home</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Menu Config</li>
+            </ol>
+          </nav>
+        </div>
       </div>
       
-      <div class="row inner-grd">
-        Menu Config
+      <div class="inner-grd">       
+        <div class="row">
+          <div class="col-md-12">
+            <table class="table table-bordered">              
+              <tbody>
+                <tr>
+                  <td>
+                    <label>Header</label>
+                    <input type="text" class="form-control" />
+                  </td>
+                  <td>
+                    <label>Images</label>
+                    <input type="text" class="form-control" />
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <label>Content</label>
+                    <input type="text" class="form-control" />
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <div class="row">
+                      <div class="col-md-10">
+                        <label>Sub Item</label>
+                        <input type="text" class="form-control" />
+                        <div class="item-list">
+                          <ul>
+                            <li>Test Item</li>
+                          </ul>
+                        </div>
+                      </div>
+                      <div class="col-md-2">
+                        <button type="button" class="btn-2 add-item-btn">Add Item</button>
+                      </div>  
+                    </div>                                      
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <button type="button" class="btn-2">Submit</button>
+                    <button type="button" class="btn-2">Edit</button>
+                    <button type="button" class="btn-1">Cancel</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+       
+
+      </div>
       </div>
     </div>    
   </div>
@@ -50,6 +123,30 @@
   <script src="assets/js/amcharts-core.min.js"></script>
   <script src="assets/js/amcharts.min.js"></script>
   <script src="assets/js/custom.js"></script>
-</body>
+  <script src="assets/js/SITEURL.js"></script>
 
+
+
+
+<script>
+$(document).ready(function(){
+
+  loadData();
+
+  function loadData(){
+    $.ajax({  
+      url: APIURL + 'home/first',  
+      type: 'GET',  
+      success: function(data) {  
+         console.log(data)  
+      },
+      error: function(error){
+        console.log(error)  
+      }  
+    });  
+  }
+
+});
+</script>  
+</body>
 </html>

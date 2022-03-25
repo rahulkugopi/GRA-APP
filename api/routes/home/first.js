@@ -5,9 +5,9 @@ const verifyTokens = require('../verifyTokens/verifyTokens');
 
 // Creating one
 router.post('/first/', async (req,res) => {
-    
-    //create new banner
+
     const first = new firstDetails({
+        visible:req.body.visible,
         header: req.body.header,
         content: req.body.content,
         image: req.body.image,
@@ -44,16 +44,16 @@ router.get('/first/:id',   getFirst, (req,res) => {
 
 // Updating one
 router.patch('/first/:id',  getFirst , async (req,res) => {
-
+    
+    if(req.body.visible != null){
+        res.first.visible = req.body.visible;
+    }
     if(req.body.header != null){
         res.first.header = req.body.header;
     }
     if(req.body.content != null){
         res.first.content = req.body.content;
-    }
-    if(req.body.email != null){
-        res.first.email = req.body.email;
-    }
+    }   
     if(req.body.image != null){
         res.first.image = req.body.image;
     }

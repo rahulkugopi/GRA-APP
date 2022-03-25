@@ -6,12 +6,12 @@ const verifyTokens = require('../verifyTokens/verifyTokens');
 // Creating one
 router.post('/second/', async (req,res) => {
     
-    //create new banner
     const second = new secondDetails({
+        visible:req.body.visible,
         header: req.body.header,
         content: req.body.content,
         image: req.body.image,
-        subItem: req.body.subItem
+        subitem: req.body.subitem
     });
    
     try {
@@ -45,15 +45,15 @@ router.get('/second/:id',  getSecond , (req,res) => {
 // Updating one
 router.patch('/second/:id',  getSecond , async (req,res) => {
 
+    if(req.body.visible != null){
+        res.second.visible = req.body.visible;
+    }
     if(req.body.header != null){
         res.second.header = req.body.header;
     }
     if(req.body.content != null){
         res.second.content = req.body.content;
-    }
-    if(req.body.email != null){
-        res.second.email = req.body.email;
-    }
+    }    
     if(req.body.image != null){
         res.second.image = req.body.image;
     }

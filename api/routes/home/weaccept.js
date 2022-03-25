@@ -8,8 +8,8 @@ router.post('/weaccept/', async (req,res) => {
     
     //create new banner
     const weaccept = new weacceptDetails({
+        visible:req.body.visible,
         header: req.body.header,
-        content: req.body.content,
         images:req.body.images
     });
    
@@ -43,13 +43,13 @@ router.get('/weaccept/:id',  getWeAccept , (req,res) => {
 
 // Updating one
 router.patch('/weaccept/:id',  getWeAccept , async (req,res) => {
-
+    
+    if(req.body.visible != null){
+        res.weaccept.visible = req.body.visible;
+    }
     if(req.body.header != null){
         res.weaccept.header = req.body.header;
-    }
-    if(req.body.content != null){
-        res.weaccept.content = req.body.content;
-    }
+    }    
     if(req.body.images != null){
         res.weaccept.images = req.body.images;
     }

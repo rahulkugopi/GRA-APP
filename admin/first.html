@@ -62,29 +62,45 @@
         </div>
       </div>
       
-      <div class="inner-grd">       
+      <div class="inner-grd" id="inner-id">       
         <div class="row">
           <div class="col-md-12">
             <table class="table table-bordered">              
               <tbody>
                 <tr>
                   <td>
+                    <label>Visiblity</label>
+                    <input type="checkbox" class="form-control" id="visible" disabled/>
+                  </td>
+                  <td>
                     <label>Header</label>
                     <input type="text" class="form-control" id="header" disabled/>
                   </td>
                   <td>
                     <label>Images</label>
-                    <input type="text" class="form-control" id="image" disabled/>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <input type="text" class="form-control" id="image" disabled/>
+                        <div class="btn-section">
+                          <button type='button' class='btn-2 btn-small' id="delete-img" disabled>Delete</button>
+                          <label for="add-image" class='btn-2 btn-small' id="add-image-label">Add Image</label>
+                          <input type="file" id="add-image" class="file-hidden" />
+                        </div>                        
+                      </div>
+                      <div class="col-md-6">
+                        <img src="" id="img-view" width="300"/>
+                      </div>
+                    </div>                    
                   </td>
                 </tr>
                 <tr>
-                  <td colspan="2">
+                  <td colspan="3">
                     <label>Content</label>
                     <input type="text" class="form-control" id="content" disabled/>
                   </td>
                 </tr>
                 <tr>
-                  <td colspan="2">
+                  <td colspan="3">
                     <div class="row">
                       <div class="col-md-10">
                         <label>Sub Item</label>
@@ -95,6 +111,7 @@
                       </div>
                       <div class="col-md-2">
                         <button type="button" class="btn-2 add-item-btn" id="add-item-btn" disabled>Add Item</button>
+                        <button type="button" class="btn-2 add-item-btn" id="update-item-btn" disabled>Update Item</button>
                       </div>  
                     </div>                                      
                   </td>
@@ -131,25 +148,34 @@ $(document).ready(function(){
 
   loadData();
   $("#submit-btn").hide();
+  $("#update-item-btn").hide();
+  $("#delete-img").hide();
+  $("#add-image-label").hide();
   
-
   function loadData(){
     $.ajax({  
       url: APIURL + 'home/first',  
       type: 'GET',  
       success: function(data) {  
+        console.log(data);
          $.each(data,function(index,res){
             $("#loader").hide();
             $("#item-list").html('');
             $("#header").val(res.header);
             $("#image").val(res.image);
+            $("#img-view").attr('src',res.image);
             $("#content").val(res.content);
             $("#submit-btn").attr('data-id',res._id);
+            if(res.visible == "true"){
+              $("#visible").prop('checked' , true);
+            }
+            else{
+              $("#visible").prop('checked' , false);
+            }
+            
             var itemList = "";
-            itemList +=""
-
             $.each(res.subitem,function(index,val){
-              itemList +="<li id="+ val._id +"><span>"+ val.item +"</span> <button type='button' class='btn-2 btn-small'>Delete</button> <button type='button' class='btn-2 btn-small'>Edit</button></li>"                       
+              itemList +="<li id="+ val._id +"><span class='additem'>"+ val.item +"</span> <button type='button' class='btn-2 btn-small' disabled>Delete</button> <button type='button' class='btn-2 btn-small row-edit-btn' id="+ val.item +" disabled>Edit</button></li>"                       
             });  
 
             $("#item-list").append(itemList);
@@ -169,21 +195,50 @@ $(document).ready(function(){
         $("#add-item-input").addClass('validation');
         return;
       }
-      itemList +="<li><span class='additem'>"+ addItems +"</span> <button type='button' class='btn-2 btn-small'>Delete</button> <button type='button' class='btn-2 btn-small'>Edit</button></li>";
+      itemList +="<li><span class='additem'>"+ addItems +"</span> <button type='button' class='btn-2 btn-small'>Delete</button> <button type='button' class='btn-2 btn-small row-edit-btn' id="+ addItems +" >Edit</button></li>";
       $("#item-list").append(itemList);
       $("#add-item-input").val('');
   });
+
+  $("#update-item-btn").click(function(){
+    var addItems = $("#add-item-input").val();
+  });
+
+  $("#item-list").on('click', 'button.row-edit-btn', function(){
+    var currentID = $(this).attr('id');
+    $("#add-item-input").val(currentID);
+    $("#update-item-btn").show();
+    $("#add-item-btn").hide();
+  });  
 
   $("#edit-btn").click(function(){
     $(this).hide();
     inputCheck(false);
     $("#submit-btn").show();
+    $("#delete-img").show();    
   });
 
   $("#cancel-btn").click(function(){
     inputCheck(true);
     $("#submit-btn").hide();
     $("#edit-btn").show();
+    $("#delete-img").show();  
+  });
+
+  $("#delete-img").click(function(){
+    $(this).hide();
+    $("#add-image-label").show();
+  });
+
+  var checkedVisibile = "";
+
+  $("#visible").change(function(){
+    if($(this).prop('checked') == true){
+      checkedVisibile = true;
+    }
+    else{
+      checkedVisibile = false;
+    }
   });
 
   $("#submit-btn").click(function(){
@@ -191,6 +246,7 @@ $(document).ready(function(){
     $("#loader").show();
     $(this).hide();
     inputCheck(true);
+    $("#edit-btn").prop('disabled', false);
     $("#submit-btn").show();
 
     var arr = [];
@@ -209,23 +265,24 @@ $(document).ready(function(){
       }
     });
 
-    var data = [{
+    var data = {
+      'visible':checkedVisibile,
       'header': header, 
       'content' : content, 
       'image':image,
-      subitem :[{arr}]
-    }];
-
-    console.log(data)
-
+      'subitem':arr
+    }
 
     $.ajax({  
-      url: APIURL + 'home/first',  
-      type: 'POST',  
-      data: myKeyVals,
+      url: APIURL + 'home/first/'+currentID,  
+      type: 'PATCH',  
+      data : JSON.stringify(data),
+      contentType: 'application/json',
       success: function(data) {          
         loadData()
         $("#loader").hide();   
+        $("#edit-btn").show();
+        $("#submit-btn").hide();
       },
       error: function(error){
         console.log(error)  

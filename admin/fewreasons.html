@@ -11,6 +11,9 @@
 </head>
 
 <body>
+  <div class="loading-section" id="loader">
+    <div class="loader"></div>
+  </div>
   <header>
     <nav class="navbar navbar-expand-lg container">
       <a class="navbar-brand" href="index.html"><img src="assets/img/logo-dark.svg" alt="logo"></a>
@@ -59,70 +62,43 @@
         </div>
       </div>
       
-      <div class="inner-grd">       
+      <div class="inner-grd" id="inner-id">       
         <div class="row">
           <div class="col-md-12">
             <table class="table table-bordered">              
               <tbody>
                 <tr>
                   <td>
-                    <label>Header</label>
-                    <input type="text" class="form-control" />
+                    <label>Visiblity</label>
+                    <input type="checkbox" class="form-control" id="visible" disabled/>
                   </td>
                   <td>
-                    <label>Images</label>
-                    <input type="text" class="form-control" />
-                  </td>
+                    <label>Header</label>
+                    <input type="text" class="form-control" id="header" disabled/>
+                  </td>                  
                 </tr>
                 <tr>
-                  <td colspan="2">
-                    <label>Content</label>
-                    <input type="text" class="form-control" />
+                  <td colspan="2">                    
+                    <div id="inner-grid-details"></div>                    
                   </td>
-                </tr>
+                </tr>              
                 <tr>
                   <td colspan="2">
-                    <div class="row">
-                      <div class="col-md-10">
-                        <label>Sub Item</label>
-                        <input type="text" class="form-control" />
-                        <div class="item-list">
-                          <ul>
-                            <li>Test Item</li>
-                          </ul>
-                        </div>
-                      </div>
-                      <div class="col-md-2">
-                        <button type="button" class="btn-2 add-item-btn">Add Item</button>
-                      </div>  
-                    </div>                                      
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2">
-                    <button type="button" class="btn-2">Submit</button>
-                    <button type="button" class="btn-2">Edit</button>
-                    <button type="button" class="btn-1">Cancel</button>
+                    <button type="button" class="btn-2" id="submit-btn">Submit</button>
+                    <button type="button" class="btn-2" id="edit-btn">Edit</button>
+                    <button type="button" class="btn-1" id="cancel-btn">Cancel</button>
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
-        </div>
-
-       
-
+        </div>    
       </div>
       </div>
     </div>    
   </div>
 
   <script src="assets/js/jquery-3.4.1.min.js"></script>
-  <script src="assets/js/popper.min.js"></script>
-  <script src="assets/js/bootstrap.min.js"></script>
-  <script src="assets/js/amcharts-core.min.js"></script>
-  <script src="assets/js/amcharts.min.js"></script>
-  <script src="assets/js/custom.js"></script>
   <script src="assets/js/SITEURL.js"></script>
 
 
@@ -132,19 +108,135 @@
 $(document).ready(function(){
 
   loadData();
+  $("#submit-btn").hide();
+  var checkedVisibile = "";
 
   function loadData(){
     $.ajax({  
-      url: APIURL + 'home/first',  
+      url: APIURL + 'home/fewreasons',  
       type: 'GET',  
-      success: function(data) {  
-         console.log(data)  
+      success: function(data) {    
+          console.log(data)    
+          $.each(data,function(index,res){
+            $("#edit-btn").prop('disabled' , false);
+            $("#loader").hide();
+            $("#inner-grid-details").html('');
+            $("#header").val(res.mainheader);
+            $("#submit-btn").attr('data-id',res._id);
+            if(res.visible == "true"){
+              $("#visible").prop('checked' , true);
+              checkedVisibile = true;
+            }
+            else{
+              $("#visible").prop('checked' , false);
+              checkedVisibile = false;
+            }
+            
+            var itemList = "";
+            itemList +=""
+
+            $.each(res.grid, function(index,val){
+              
+              var rowCount = index+1
+
+              itemList +="<div style='margin:0 0 20px 0;' class='col-sm-12 few-inner-grid'><h1>Grid "+ rowCount +"</h1><table class='table'>"
+              itemList +="<tbody>"
+              itemList +="<tr>"
+              itemList +="<td><input type='text' class='form-control gridheader' value="+ val.gridheader +" disabled /></td>"
+              itemList +="<td><input type='text' class='form-control gridimage' value="+ val.gridimage +" disabled /></td>"
+              itemList +="</tr>"
+              itemList +="<tr>"
+              itemList +="<td colspan='2'><textarea class='form-control gridcontent' disabled>"+ val.gridcontent +"</textarea></td>"                 
+              itemList +="</tr>"
+              itemList +="</tbody>"
+              itemList +="</table></div>"                       
+            });  
+
+            $("#inner-grid-details").append(itemList);
+
+          })
       },
       error: function(error){
         console.log(error)  
       }  
     });  
   }
+
+  $("#edit-btn").click(function(){
+    $(this).hide();
+    inputCheck(false);
+    $("#submit-btn").show();
+  });
+
+  $("#cancel-btn").click(function(){
+    inputCheck(true);
+    loadData();
+    $("#submit-btn").hide();
+    $("#edit-btn").show();
+  });
+
+  function inputCheck(evt){
+    $("input , button, textarea").prop('disabled',evt);
+  }
+
+  
+
+  $("#visible").change(function(){
+    if($(this).prop('checked') == true){
+      checkedVisibile = "true";
+    }
+    else{
+      checkedVisibile = "false";
+    }
+  });
+
+  $("#submit-btn").click(function(){
+      var currentID = $(this).attr('data-id')
+      $("#loader").show();
+      $(this).hide();
+      inputCheck(true);
+      $("#edit-btn").prop('disabled', false);
+      $("#submit-btn").show();
+      var arr = [];
+      var gridheader = "";
+      var gridcontent = "";
+      var gridimage = "";
+      var header = $("#header").val();
+
+      $("#inner-grid-details .few-inner-grid table tbody").each(function(){
+        gridheader = $(this).find('td input.gridheader').val();   
+        gridcontent = $(this).find('td textarea.gridcontent').val();   
+        gridimage = $(this).find('td input.gridimage').val();      
+        var y = {}
+        y['gridheader'] = gridheader
+        y['gridcontent'] = gridcontent
+        y['gridimage'] = gridimage
+        arr.push(y);                                                          
+      });
+      var data = {
+        'visible':checkedVisibile,
+        'mainheader': header, 
+        //'maincontent':'',
+        'grid':arr
+      }
+
+      $.ajax({  
+          url: APIURL + 'home/fewreasons/'+currentID,  
+          type: 'PATCH',  
+          data : JSON.stringify(data),
+          contentType: 'application/json',
+          success: function(data) {                      
+            $("#loader").hide();   
+            $("#edit-btn").show();
+            $("#submit-btn").hide();
+            loadData();
+          },
+          error: function(error){
+            console.log(error)  
+          }  
+      }); 
+
+  });                                                                                 
 
 });
 </script>  

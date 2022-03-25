@@ -11,6 +11,9 @@
 </head>
 
 <body>
+  <div class="loading-section" id="loader">
+    <div class="loader"></div>
+  </div>
   <header>
     <nav class="navbar navbar-expand-lg container">
       <a class="navbar-brand" href="index.html"><img src="assets/img/logo-dark.svg" alt="logo"></a>
@@ -63,46 +66,42 @@
         <div class="row">
           <div class="col-md-12">
             <table class="table table-bordered">              
-              <tbody>
+              <tbody>   
                 <tr>
                   <td>
-                    <label>Header</label>
-                    <input type="text" class="form-control" />
-                  </td>
+                    <label>Visiblity</label>
+                    <input type="checkbox" class="form-control" id="visible" disabled/>
+                  </td>                                  
+                </tr>             
+                <tr>
                   <td>
-                    <label>Images</label>
-                    <input type="text" class="form-control" />
+                    <label>Content 1</label>
+                    <textarea class="form-control" id="content1"></textarea>
+                  </td>
+                </tr> 
+                <tr>
+                  <td>
+                    <label>Content 2</label>
+                    <textarea class="form-control" id="content2"></textarea>
+                  </td>
+                </tr> 
+                <tr>
+                  <td>
+                    <label>Content 3</label>
+                    <textarea class="form-control" id="content3"></textarea>
+                  </td>
+                </tr>                  
+                <tr>
+                  <td>
+                    <label>Content 4</label>
+                    <textarea class="form-control" id="content4"></textarea>
                   </td>
                 </tr>
                 <tr>
                   <td colspan="2">
-                    <label>Content</label>
-                    <input type="text" class="form-control" />
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2">
-                    <div class="row">
-                      <div class="col-md-10">
-                        <label>Sub Item</label>
-                        <input type="text" class="form-control" />
-                        <div class="item-list">
-                          <ul>
-                            <li>Test Item</li>
-                          </ul>
-                        </div>
-                      </div>
-                      <div class="col-md-2">
-                        <button type="button" class="btn-2 add-item-btn">Add Item</button>
-                      </div>  
-                    </div>                                      
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2">
-                    <button type="button" class="btn-2">Submit</button>
-                    <button type="button" class="btn-2">Edit</button>
-                    <button type="button" class="btn-1">Cancel</button>
+                    <button type="button" class="btn-2" id="submit-btn">Submit</button>
+                    <button type="button" class="btn-2" id="edit-btn">Edit</button>
+                    <button type="button" class="btn-1" id="cancel-btn">Cancel</button>
                   </td>
                 </tr>
               </tbody>
@@ -128,25 +127,61 @@
 
 
 
-<script>
-$(document).ready(function(){
-
-  loadData();
-
-  function loadData(){
-    $.ajax({  
-      url: APIURL + 'home/first',  
-      type: 'GET',  
-      success: function(data) {  
-         console.log(data)  
-      },
-      error: function(error){
-        console.log(error)  
-      }  
-    });  
-  }
-
-});
-</script>  
+  <script>
+    $(document).ready(function(){
+    
+      loadData();
+      $("#submit-btn").hide();
+    
+      function loadData(){
+        $.ajax({  
+          url: APIURL + 'home/footer',  
+          type: 'GET',  
+          success: function(data) {        
+           
+              $.each(data,function(index,res){
+                console.log(res)     
+                $("#edit-btn").prop('disabled' , false);
+                $("#loader").hide();
+               
+                $("#content1").val(res.content1);
+                $("#content2").val(res.content2);
+                $("#content3").val(res.content3);
+                $("#content4").val(res.content4);
+                $("#submit-btn").attr('data-id',res._id);
+                if(res.visible == "true"){
+                  $("#visible").prop('checked' , true);
+                }
+                else{
+                  $("#visible").prop('checked' , false);
+                }                                 
+    
+              })
+          },
+          error: function(error){
+            console.log(error)  
+          }  
+        });  
+      }
+    
+      $("#edit-btn").click(function(){
+        $(this).hide();
+        inputCheck(false);
+        $("#submit-btn").show();
+      });
+    
+      $("#cancel-btn").click(function(){
+        inputCheck(true);
+        loadData();
+        $("#submit-btn").hide();
+        $("#edit-btn").show();
+      });
+    
+      function inputCheck(evt){
+        $("input , button, textarea").prop('disabled',evt);
+      }
+    
+    });
+  </script> 
 </body>
 </html>

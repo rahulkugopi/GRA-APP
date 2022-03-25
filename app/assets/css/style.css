@@ -133,6 +133,10 @@ html, body {
     bottom: 30px;
 }
 
+.carousel-indicators li{
+    cursor: pointer;
+}
+
 .grd{
     padding: 4em 0 4em 0;
 }
@@ -680,6 +684,7 @@ header .nav-link.btn {
 
 .landing-feature-item h3 {
     font-size: 20px;
+    word-break: break-all;
 }
 
 .landing-number {

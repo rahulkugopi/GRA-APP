@@ -11,6 +11,9 @@
 </head>
 
 <body>
+  <div class="loading-section" id="loader">
+    <div class="loader"></div>
+  </div>
   <header>
     <nav class="navbar navbar-expand-lg container">
       <a class="navbar-brand" href="index.html"><img src="assets/img/logo-dark.svg" alt="logo"></a>
@@ -59,62 +62,59 @@
         </div>
       </div>
       
-      <div class="inner-grd">       
+      <div class="inner-grd" id="inner-id">       
         <div class="row">
           <div class="col-md-12">
             <table class="table table-bordered">              
               <tbody>
                 <tr>
                   <td>
+                    <label>Visiblity</label>
+                    <input type="checkbox" class="form-control" id="visible" disabled/>
+                  </td>
+                  <td>
                     <label>Header</label>
-                    <input type="text" class="form-control" />
+                    <input type="text" class="form-control" id="header" disabled/>
                   </td>
                   <td>
                     <label>Images</label>
-                    <input type="text" class="form-control" />
+                    <input type="text" class="form-control" id="image" disabled/>
                   </td>
                 </tr>
                 <tr>
-                  <td colspan="2">
+                  <td colspan="3">
                     <label>Content</label>
-                    <input type="text" class="form-control" />
+                    <input type="text" class="form-control" id="content" disabled/>
                   </td>
                 </tr>
                 <tr>
-                  <td colspan="2">
+                  <td colspan="3">
                     <div class="row">
                       <div class="col-md-10">
                         <label>Sub Item</label>
-                        <input type="text" class="form-control" />
+                        <input type="text" class="form-control" id="add-item-input" disabled/>
                         <div class="item-list">
-                          <ul>
-                            <li>Test Item <button type="button" class="btn-2 btn-small">Delete</button></li>
-                            <li>Test Item <button type="button" class="btn-2 btn-small">Delete</button></li>
-                            <li>Test Item <button type="button" class="btn-2 btn-small">Delete</button></li>
-                            <li>Test Item <button type="button" class="btn-2 btn-small">Delete</button></li>
-                          </ul>
+                          <ul id="item-list"></ul>
                         </div>
                       </div>
                       <div class="col-md-2">
-                        <button type="button" class="btn-2 add-item-btn">Add Item</button>
+                        <button type="button" class="btn-2 add-item-btn" id="add-item-btn" disabled>Add Item</button>
+                        <button type="button" class="btn-2 add-item-btn" id="update-item-btn" disabled>Update Item</button>
                       </div>  
                     </div>                                      
                   </td>
                 </tr>
                 <tr>
                   <td colspan="2">
-                    <button type="button" class="btn-2">Submit</button>
-                    <button type="button" class="btn-2">Edit</button>
-                    <button type="button" class="btn-1">Cancel</button>
+                    <button type="button" class="btn-2" id="submit-btn">Submit</button>
+                    <button type="button" class="btn-2" id="edit-btn">Edit</button>
+                    <button type="button" class="btn-1" id="cancel-btn">Cancel</button>
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
-        </div>
-
-       
-
+        </div>    
       </div>
       </div>
     </div>    
@@ -131,25 +131,154 @@
 
 
 
-<script>
-$(document).ready(function(){
+  <script>
+    $(document).ready(function(){
+    
+      loadData();
+      $("#submit-btn").hide();
+      $("#update-item-btn").hide();
+      
+      function loadData(){
+        $.ajax({  
+          url: APIURL + 'home/second',  
+          type: 'GET',  
+          success: function(data) {  
+            console.log(data);
+             $.each(data,function(index,res){
+                $("#loader").hide();
+                $("#item-list").html('');
+                $("#header").val(res.header);
+                $("#image").val(res.image);
+                $("#content").val(res.content);
+                $("#submit-btn").attr('data-id',res._id);
+                if(res.visible == "true"){
+                  $("#visible").prop('checked' , true);
+                }
+                else{
+                  $("#visible").prop('checked' , false);
+                }
+                
+                var itemList = "";
+                itemList +=""
+    
+                $.each(res.subitem,function(index,val){
+                  itemList +="<li id="+ val._id +"><span class='additem'>"+ val.item +"</span> <button type='button' class='btn-2 btn-small' disabled>Delete</button> <button type='button' class='btn-2 btn-small row-edit-btn' id="+ val.item +" disabled>Edit</button></li>"                       
+                });  
+    
+                $("#item-list").append(itemList);
+    
+             })
+          },
+          error: function(error){
+            console.log(error)  
+          }  
+        });  
+      }
+    
+      $("#add-item-btn").click(function(){
+          var itemList = "";
+          var addItems = $("#add-item-input").val();
+          if(addItems == ""){
+            $("#add-item-input").addClass('validation');
+            return;
+          }
+          itemList +="<li><span class='additem'>"+ addItems +"</span> <button type='button' class='btn-2 btn-small'>Delete</button> <button type='button' class='btn-2 btn-small row-edit-btn' id="+ addItems +" >Edit</button></li>";
+          $("#item-list").append(itemList);
+          $("#add-item-input").val('');
+      });
+    
+      $("#update-item-btn").click(function(){
+        var addItems = $("#add-item-input").val();
+      });
+    
+      $("#item-list").on('click', 'button.row-edit-btn', function(){
+        var currentID = $(this).attr('id');
+        $("#add-item-input").val(currentID);
+        $("#update-item-btn").show();
+        $("#add-item-btn").hide();
+      });  
+    
+      $("#edit-btn").click(function(){
+        $(this).hide();
+        inputCheck(false);
+        $("#submit-btn").show();
+      });
+    
+      $("#cancel-btn").click(function(){
+        inputCheck(true);
+        $("#submit-btn").hide();
+        $("#edit-btn").show();
+      });
 
-  loadData();
+      var checkedVisibile = "";
 
-  function loadData(){
-    $.ajax({  
-      url: APIURL + 'home/first',  
-      type: 'GET',  
-      success: function(data) {  
-         console.log(data)  
-      },
-      error: function(error){
-        console.log(error)  
-      }  
-    });  
-  }
+      $("#visible").change(function(){
+        if($(this).prop('checked') == true){
+          checkedVisibile = true;
+        }
+        else{
+          checkedVisibile = false;
+        }
+      });
+    
+      $("#submit-btn").click(function(){
+        var currentID = $(this).attr('data-id')
+        $("#loader").show();
+        $(this).hide();
+        inputCheck(true);
+        $("#edit-btn").prop('disabled', false);
+        $("#submit-btn").show();
+    
+        var arr = [];
+        
+        var header = $("#header").val();
+        var image = $("#image").val();
+        var content = $("#content").val();
+        var item ="";
 
-});
-</script>  
+        $("#item-list li").each(function(){
+          item = $(this).find('span.additem').text();      
+          var y = {}
+          if(item !=""){
+            y['item'] = item
+            arr.push(y)
+          }
+        });
+    
+        var data = {
+          'visible':checkedVisibile,
+          'header': header, 
+          'content' : content, 
+          'image':image,
+          'subitem':arr
+        }
+    
+        $.ajax({  
+          url: APIURL + 'home/second/'+currentID,  
+          type: 'PATCH',  
+          data : JSON.stringify(data),
+          contentType: 'application/json',
+          success: function(data) {          
+            loadData()
+            $("#loader").hide();   
+            $("#edit-btn").show();
+            $("#submit-btn").hide();
+          },
+          error: function(error){
+            console.log(error)  
+          }  
+        });      
+      });
+    
+      function inputCheck(evt){
+        $("input , button").prop('disabled',evt);
+      }
+    
+      $("input").keydown(function(){
+        $("input").removeClass('validation');
+      })
+    
+    });
+    </script>  
 </body>
 </html>

@@ -1,18 +1,18 @@
 const mongoose = require('mongoose');
 
 const weacceptSchema = new mongoose.Schema({
-    header:{
+    visible:{
         type: String,
         required: true,
         min:6,
         max:255
     },
-    content: {
+    header:{
         type: String,
         required: true,
         min:6,
-        max:1024
-    },
+        max:255
+    },    
     images: [{    
         images:{ type: String, required: true }
     }]

@@ -8,10 +8,8 @@ router.post('/footer/', async (req,res) => {
     
     //create new banner
     const footer = new footerDetails({
-        content1: req.body.content1,
-        content2: req.body.content2,
-        content3:req.body.content3,
-        content4:req.body.content4
+        visible:req.body.visible,
+        items: req.body.items
     });
    
     try {
@@ -45,15 +43,12 @@ router.get('/footer/:id',  getFooter , (req,res) => {
 // Updating one
 router.patch('/footer/:id',  getFooter , async (req,res) => {
 
-    if(req.body.header != null){
-        res.footer.header = req.body.header;
+     if(req.body.visible != null){
+        res.first.visible = req.body.visible;
     }
-    if(req.body.content != null){
-        res.footer.content = req.body.content;
-    }
-    if(req.body.images != null){
-        res.footer.images = req.body.images;
-    }
+    if(req.body.items != null){
+        res.footer.items = req.body.items;
+    }    
 
     try {
        const updatedFooter = await res.footer.save()

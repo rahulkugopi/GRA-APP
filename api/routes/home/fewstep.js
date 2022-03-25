@@ -8,6 +8,7 @@ router.post('/fewstep/', async (req,res) => {
     
     //create new banner
     const fewstep = new fewstepDetails({
+        visible: req.body.visible,
         mainheader: req.body.mainheader,
         maincontent: req.body.maincontent,
         grid:req.body.grid
@@ -44,6 +45,9 @@ router.get('/fewstep/:id',  getFewStep , (req,res) => {
 // Updating one
 router.patch('/fewstep/:id',  getFewStep , async (req,res) => {
 
+    if(req.body.visible != null){
+        res.fewstep.visible = req.body.visible;
+    }
     if(req.body.mainheader != null){
         res.fewstep.mainheader = req.body.mainheader;
     }

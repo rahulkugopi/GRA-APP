@@ -8,7 +8,7 @@ const verifyTokens = require('../verifyTokens/verifyTokens');
 router.post('/banner/', async (req,res) => {
     
     //create new banner
-    const banner = new bannerDetails({
+    const banner = new bannerDetails({        
         name: req.body.name,
         content: req.body.content,
         image: req.body.image,
@@ -46,24 +46,21 @@ router.get('/banner/:id',   getBanner, (req,res) => {
 
 // Updating one
 router.patch('/banner/:id',  getBanner , async (req,res) => {
-
+   
     if(req.body.name != null){
         res.banner.name = req.body.name;
     }
     if(req.body.content != null){
         res.banner.content = req.body.content;
-    }
-    if(req.body.email != null){
-        res.banner.email = req.body.email;
-    }
+    }   
     if(req.body.image != null){
         res.banner.image = req.body.image;
     }
     if(req.body.buttonname != null){
         res.banner.buttonname = req.body.buttonname;
     }
-    if(req.body.buttonname != null){
-        res.banner.buttonname = req.body.buttonname;
+    if(req.body.buttonurl != null){
+        res.banner.buttonurl = req.body.buttonurl;
     }
 
     try {

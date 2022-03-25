@@ -8,6 +8,7 @@ router.post('/fewreasons/', async (req,res) => {
     
     //create new banner
     const fewreasons = new fewreasonsDetails({
+        visible: req.body.visible,
         mainheader: req.body.mainheader,
         maincontent: req.body.maincontent,
         grid:req.body.grid
@@ -43,7 +44,10 @@ router.get('/fewreasons/:id',  getFewReasons , (req,res) => {
 
 // Updating one
 router.patch('/fewreasons/:id',  getFewReasons , async (req,res) => {
-
+    
+    if(req.body.visible != null){
+        res.fewreasons.visible = req.body.visible;
+    }
     if(req.body.mainheader != null){
         res.fewreasons.mainheader = req.body.mainheader;
     }

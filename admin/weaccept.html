@@ -11,6 +11,9 @@
 </head>
 
 <body>
+  <div class="loading-section" id="loader">
+    <div class="loader"></div>
+  </div>
   <header>
     <nav class="navbar navbar-expand-lg container">
       <a class="navbar-brand" href="index.html"><img src="assets/img/logo-dark.svg" alt="logo"></a>
@@ -66,30 +69,22 @@
               <tbody>
                 <tr>
                   <td>
-                    <label>Header</label>
-                    <input type="text" class="form-control" />
+                    <label>Visiblity</label>
+                    <input type="checkbox" class="form-control" id="visible" disabled/>
                   </td>
                   <td>
-                    <label>Images</label>
-                    <input type="text" class="form-control" />
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2">
-                    <label>Content</label>
-                    <input type="text" class="form-control" />
-                  </td>
-                </tr>
+                    <label>Header</label>
+                    <input type="text" class="form-control" id="header" disabled/>
+                  </td>                  
+                </tr>               
                 <tr>
                   <td colspan="2">
                     <div class="row">
                       <div class="col-md-10">
-                        <label>Sub Item</label>
+                        <label>Add Images</label>
                         <input type="text" class="form-control" />
                         <div class="item-list">
-                          <ul>
-                            <li>Test Item</li>
-                          </ul>
+                          <ul id="item-list"></ul>
                         </div>
                       </div>
                       <div class="col-md-2">
@@ -100,9 +95,9 @@
                 </tr>
                 <tr>
                   <td colspan="2">
-                    <button type="button" class="btn-2">Submit</button>
-                    <button type="button" class="btn-2">Edit</button>
-                    <button type="button" class="btn-1">Cancel</button>
+                    <button type="button" class="btn-2" id="submit-btn">Submit</button>
+                    <button type="button" class="btn-2" id="edit-btn">Edit</button>
+                    <button type="button" class="btn-1" id="cancel-btn">Cancel</button>
                   </td>
                 </tr>
               </tbody>
@@ -118,35 +113,129 @@
   </div>
 
   <script src="assets/js/jquery-3.4.1.min.js"></script>
-  <script src="assets/js/popper.min.js"></script>
-  <script src="assets/js/bootstrap.min.js"></script>
-  <script src="assets/js/amcharts-core.min.js"></script>
-  <script src="assets/js/amcharts.min.js"></script>
-  <script src="assets/js/custom.js"></script>
   <script src="assets/js/SITEURL.js"></script>
 
 
 
 
-<script>
-$(document).ready(function(){
+  <script>
+    $(document).ready(function(){
+    
+      loadData();
+      $("#submit-btn").hide();
+      var checkedVisibile = "";
 
-  loadData();
+      function loadData(){
+        $.ajax({  
+          url: APIURL + 'home/weaccept',  
+          type: 'GET',  
+          success: function(data) {        
+           
+              $.each(data,function(index,res){
+                console.log(res)     
+                $("#edit-btn").prop('disabled' , false);
+                $("#loader").hide();
+                $("#item-list").html('');
+                $("#header").val(res.header);
+                $("#submit-btn").attr('data-id',res._id);
+                if(res.visible == "true"){
+                  $("#visible").prop('checked' , true);
+                  checkedVisibile = "true";
+                }
+                else{
+                  $("#visible").prop('checked' , false);
+                  checkedVisibile = "false";
+                }
+                
+                var itemList = "";
+                itemList +=""
+    
+                $.each(res.images, function(index,val){                  
+                  itemList +="<li id="+ val._id +"><span class='additem'>"+ val.images +"</span> <button type='button' class='btn-2 btn-small' disabled>Delete</button> <button type='button' class='btn-2 btn-small row-edit-btn' id="+ val.images +" disabled>Edit</button></li>"                       
+                });  
+                    
+                $("#item-list").append(itemList);                    
+    
+              })
+          },
+          error: function(error){
+            console.log(error)  
+          }  
+        });  
+      }
+    
+      $("#edit-btn").click(function(){
+        $(this).hide();
+        inputCheck(false);
+        $("#submit-btn").show();
+      });
+    
+      $("#cancel-btn").click(function(){
+        inputCheck(true);
+        loadData();
+        $("#submit-btn").hide();
+        $("#edit-btn").show();
+      });
+    
+      function inputCheck(evt){
+        $("input , button, textarea").prop('disabled',evt);
+      }      
 
-  function loadData(){
-    $.ajax({  
-      url: APIURL + 'home/first',  
-      type: 'GET',  
-      success: function(data) {  
-         console.log(data)  
-      },
-      error: function(error){
-        console.log(error)  
-      }  
-    });  
-  }
+      $("#visible").change(function(){
+        if($(this).prop('checked') == true){
+          checkedVisibile = true;
+        }
+        else{
+          checkedVisibile = false;
+        }
+      });
 
-});
-</script>  
+      $("#submit-btn").click(function(){
+        var currentID = $(this).attr('data-id')
+        $("#loader").show();
+        $(this).hide();
+        inputCheck(true);
+        $("#edit-btn").prop('disabled', false);
+        $("#submit-btn").show();
+
+        var arr = [];
+        
+        var header = $("#header").val();       
+        var item ="";
+        $("#item-list").each(function(){
+          item = $(this).find('li').text();      
+          var y = {}
+          if(item !=""){
+            y['images'] = item
+            arr.push(y)
+          }
+        });
+
+        var data = {
+          'visible':checkedVisibile,
+          'header': header, 
+          'content' : content, 
+          'images':arr,
+        }
+
+        $.ajax({  
+          url: APIURL + 'home/weaccept/'+currentID,  
+          type: 'PATCH',  
+          data : JSON.stringify(data),
+          contentType: 'application/json',
+          success: function(data) {          
+            loadData()
+            $("#loader").hide();   
+            $("#edit-btn").show();
+            $("#submit-btn").hide();
+          },
+          error: function(error){
+            console.log(error)  
+          }  
+        });      
+      });
+    
+    });
+  </script>
 </body>
 </html>

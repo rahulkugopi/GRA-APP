@@ -81,29 +81,7 @@
   </header>
 
   <!-- Carousel wrapper -->
-  <div id="carouselmain" class="carousel slide carousel-fade" data-ride="carousel">
-    <ol class="carousel-indicators">
-      <li data-target="#carouselmain" data-slide-to="0" class="active"></li>
-      <li data-target="#carouselmain" data-slide-to="1"></li>
-    </ol>
-    <div class="carousel-inner">
-      
-      <div class="carousel-item bg1 active">
-          <div class="carousel-caption">
-            <h1>GXSquare</h1>
-            <p>Become part of a global community of people who have found their path to the crypto world with GXSquare</p>
-            <a href="https://account.gxsquare.com/login" target="_blank" class="btn-2">Get Started</a>
-          </div>
-      </div>
-
-      <div class="carousel-item bg2">
-        <div class="carousel-caption">
-          <h1>Another example headline.</h1>
-          <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-        </div>
-      </div>
-    </div>    
-  </div>
+  <div id="carouselmain" class="carousel slide carousel-fade" data-ride="carousel"></div>
   <!-- Carousel wrapper -->
 
   <div class="container-fluid no-fluid">
@@ -160,44 +138,33 @@
     </div>
   </div>
 
-  <div class="landing-info-one grd-section">
+  <div class="landing-info-one grd-section" id="first-section">
     <div class="container">
       <div class="row">
         <div class="col-md-12 text-center">
-          <h2>The most advance and secure cryptocurrency platform.</h2>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam iusto, nisi illo nulla alias fugiat
-            repudiandae unde ab maxime placeat facere, dicta deleniti ipsam animi expedita quam minus perferendis
-            veniam?</p>
+          <h2 id="first-section-hdr"></h2>
+          <p id="first-section-content"></p>
         </div>
       </div>  
       <div class="row">
         <div class="col-md-6">    
-          <ul>
-            <li><i class="icon ion-ios-checkmark-circle"></i> Live Technical Analysis</li>
-            <li><i class="icon ion-ios-checkmark-circle"></i> Live Market Data</li>
-            <li><i class="icon ion-ios-checkmark-circle"></i> Live Cryptocurrency Price</li>
-            <li><i class="icon ion-ios-checkmark-circle"></i> Deposit & Withdraw</li>
-            <li><i class="icon ion-ios-checkmark-circle"></i> Buy & Sell</li>
-            <li><i class="icon ion-ios-checkmark-circle"></i> Coin Listing</li>
-            <li><i class="icon ion-ios-checkmark-circle"></i> Manage Wallets</li>
-            <li><i class="icon ion-ios-checkmark-circle"></i> Market depth</li>
-          </ul>
+          <ul id="first-section-items"></ul>
         </div>
         <div class="col-md-6">
-          <img src="assets/img/landing/dash-preview.png" class="" alt="">
+          <img src="" class="" alt="" id="first-section-img">
         </div>
       </div>
     </div>
   </div>
-  <div class="landing-info-one grd">
+
+
+  <div class="landing-info-one grd" id="second-section">
     <div class="container">
       <div class="row">
         <div class="col-md-12 text-center">
-          <h2>Live Market Gainers and Losers tracking</h2>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam iusto, nisi illo nulla alias fugiat
-            repudiandae unde ab maxime placeat facere, dicta deleniti ipsam animi expedita quam minus perferendis
-            veniam?</p>
-          </div>  
+          <h2 id="second-section-hdr"></h2>
+          <p id="second-section-content"></p>
+        </div>  
       </div>
       <div class="row">
         <div class="col-md-5">
@@ -229,50 +196,20 @@
           </div>
           <!-- TradingView Widget END -->
         </div>
-        <div class="offset-md-1 col-md-6">
-         
-          <ul>
-            <li><i class="icon ion-ios-checkmark-circle"></i> Live Gainers Tracking</li>
-            <li><i class="icon ion-ios-checkmark-circle"></i> Live Losers Tracking</li>
-            <li><i class="icon ion-ios-checkmark-circle"></i> Live Market Data</li>
-            <li><i class="icon ion-ios-checkmark-circle"></i> Live Cryptocurrency Price</li>
-            <li><i class="icon ion-ios-checkmark-circle"></i> Past Coin Price check</li>
-          </ul>
+        <div class="offset-md-1 col-md-6">         
+          <ul id="second-section-items"></ul>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="landing-feature">
+  <div class="landing-feature" id="few-reasons-section">
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <h2>Here are a few reasons why <br> you should choose GXSquare</h2>
+          <h2 id="few-reasons-hdr"></h2>
         </div>
-        <div class="col-md-4">
-          <div class="landing-feature-item">
-            <img src="assets/img/landing/stroge.svg" alt="">
-            <h3>Secure storage</h3>
-            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Modi quaerat, quidem ut, fugiat blanditiis
-              facere</p>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="landing-feature-item">
-            <img src="assets/img/landing/backup.svg" alt="">
-            <h3>Protected by insurance</h3>
-            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Modi quaerat, quidem ut, fugiat blanditiis
-              facere</p>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="landing-feature-item">
-            <img src="assets/img/landing/managment.svg" alt="">
-            <h3>Industry best practices</h3>
-            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Modi quaerat, quidem ut, fugiat blanditiis
-              facere</p>
-          </div>
-        </div>
+        <div id="few-reson-items" class="col-md-12"></div>        
       </div>
     </div>
   </div>
@@ -298,86 +235,32 @@
     </div>
   </div>
 
-  <div class="landing-feature landing-start">
+  <div class="landing-feature landing-start" id="few-step-section">
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <h2>Get started in a few steps</h2>
+          <h2 id="few-step-hdr"></h2>
         </div>
-        <div class="col-md-4">
-          <div class="landing-feature-item">
-            <img src="assets/img/landing/user.svg" alt="">
-            <span>1</span>
-            <h3>Create an account </h3>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="landing-feature-item">
-            <img src="assets/img/landing/bank.svg" alt="">
-            <span>
-              2
-            </span>
-            <h3>Link your bank account </h3>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="landing-feature-item">
-            <img src="assets/img/landing/trade.svg" alt="">
-            <span>3</span>
-            <h3>Start buying & selling</h3>
-          </div>
-        </div>
+        <div id="few-step-items" class="col-md-12"></div>              
       </div>
     </div>
   </div>
 
-  <div class="landing-sub">
+  <div class="landing-sub landing-feature" id="we-accept-section">
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <h2>We accept</h2>
+          <h2 id="we-accept-hdr"></h2>
         </div>
       </div>
-
-      <div class="row">
-        <div class="col-md-2">
-          <img src="assets/img/payment/visa-payment-method.svg" alt="">
-        </div>
-        <div class="col-md-2">
-          <img src="assets/img/payment/mastercard-payment-method.svg" alt="">
-        </div>
-        <div class="col-md-2">
-          <img src="assets/img/payment/maestro-payment-method.svg" alt="">
-        </div>
-        <div class="col-md-2">
-          <img src="assets/img/payment/skrill-payment-method.svg" alt="">
-        </div>
-        <div class="col-md-2">
-          <img src="assets/img/payment/bank-transfers-payment-method.svg" alt="">
-        </div>
-        <div class="col-md-2">
-          <img src="assets/img/payment/neteller-payment-method.svg" alt="">
-        </div>
-      </div>
-
+      <div id="accept-items"></div>
     </div>
   </div>
 
-  <footer class="landing-footer">
+  <footer class="landing-footer" id="footer">
     <div class="container">
       <div class="row">
-        <div class="col-md-12 text-center">
-          <p>FXTM is an international online broker offering financial services in various financial instruments.</p>
-          <p>FXTM brand is authorized and regulated in various jurisdictions. ForexTime Limited (www.forextime.com/eu) is regulated by the Cyprus Securities and Exchange Commission with CIF
-            license number 185/12, licensed by the Financial Sector Conduct Authority (FSCA) of South Africa, with FSP No. 46614. The company is also registered with the Financial Conduct
-            Authority of the UK with number 600475. The office is at 35, Lamprou Konstantara, FXTM Tower, Kato Polemidia, 4156, Limassol, Cyprus. Exinity Limited (www.fxtm.com) is regulated by
-            the Financial Services Commission of the Republic of Mauritius with an Investment Dealer License bearing license number C113012295 and it is situated at 5th Floor, 355 NEX Tower, Rue
-            du Savoir, Cybercity, Ebene 72201, Mauritius . Forextime UK Limited is authorised and regulated by the Financial Conduct Authority, firm reference number 777911 and is situated at 30 Churchill Place, London, E14 5EU, UK.</p>
-          <p>Your capital is at risk. You should not spend more than you can afford to lose and should ensure that you fully understand the risks involved. Using the products offered may not be
-            suitable for everyone. Before you use these products, please take into consideration your level of experience, financial objectives and seek independent advice if necessary. It is the
-            responsibility of the Client to ascertain whether he/she is permitted to use the services of the FXTM brand based on the legal requirements in his/her country of residence. Please read
-            FXTM’s full Risk Disclosure.</p>
-        </div>
+        <div class="col-md-12 text-center" id="footer-content"></div>
       </div>
       <div class="row">
         <div class="col-md-2">
@@ -404,6 +287,248 @@
   <script src="assets/js/amcharts-core.min.js"></script>
   <script src="assets/js/amcharts.min.js"></script>
   <script src="assets/js/custom.js"></script>
-</body>
+  <script src="assets/js/SITEURL.js"></script>
 
+  <script>
+    $(document).ready(function(){ 
+
+      BannerSection();
+      FirstSection();
+      SecondSection();
+      FewReasons();
+      FewSteps();
+      WeAccept();
+      Footer();
+
+      function BannerSection(){
+        $.ajax({  
+          url: APIURL + 'home/banner',  
+          type: 'GET',  
+          success: function(data) {
+              $("#carouselmain").html('');
+              var carouselItem = "";
+              var carouselAct =""
+              carouselAct+="<ol class='carousel-indicators'>"
+              carouselItem+="<div class='carousel-inner' id='carousel-inner'>"
+              $.each(data,function(index,res){
+                  if(index == 0){
+                    carouselAct+="<li data-target='#carouselmain' data-slide-to="+ index +" class='active'></li>"                    
+                    carouselItem+="<div class='carousel-item bg1 active' style='background-image:url("+ res.image +")'>"
+                    carouselItem+="<div class='carousel-caption'>"
+                    carouselItem+="<h1>"+ res.name +"</h1>"
+                    carouselItem+="<p>Become part of a global community of people who have found their path to the crypto world with GXSquare</p>"
+                    carouselItem+="<a href='https://account.gxsquare.com/login' target='_blank' class='btn-2'>Get Started</a>"
+                    carouselItem+="</div></div>"
+                  }
+                  else{
+                    carouselAct+="<li data-target='#carouselmain' data-slide-to="+ index +" class=''></li>"                    
+                    carouselItem+="<div class='carousel-item'  style='background-image:url("+ res.image +")'>"
+                    carouselItem+="<div class='carousel-caption'>"
+                    carouselItem+="<h1>"+ res.name +"</h1>"
+                    carouselItem+="<p>Become part of a global community of people who have found their path to the crypto world with GXSquare</p>"
+                    carouselItem+="<a href='https://account.gxsquare.com/login' target='_blank' class='btn-2'>Get Started</a>"
+                    carouselItem+="</div></div>"
+                  }                
+              }); 
+              carouselAct+="</ol>"
+              carouselItem+="</div>"
+             
+              $("#carouselmain").append(carouselAct+ carouselItem);
+          }
+        });  
+      }
+
+      function FirstSection(){
+        $.ajax({  
+          url: APIURL + 'home/first',  
+          type: 'GET',  
+          success: function(data) {              
+            $.each(data,function(index,res){
+              if(res.visible == "true"){
+                $("#first-section").show();
+              }
+              else{
+                $("#first-section").hide();
+              }
+              
+              $("#first-section-hdr").html(res.header);
+              $("#first-section-content").html(res.content);
+              $("#first-section-img").attr('src', res.image);
+              
+              $("#first-section-items").html('');
+              var itemList = "";
+              $.each(res.subitem,function(index,val){
+                itemList +="<li><i class='icon ion-ios-checkmark-circle'></i> "+ val.item +"</li>"                       
+              });  
+
+              $("#first-section-items").append(itemList);              
+              
+            });
+          }
+        });
+      }
+
+      function SecondSection(){
+        $.ajax({  
+          url: APIURL + 'home/second',  
+          type: 'GET',  
+          success: function(data) {            
+            $.each(data,function(index,res){
+              if(res.visible == "true"){
+                $("#second-section").show();
+              }
+              else{
+                $("#second-section").hide();
+              }
+            
+              $("#second-section-hdr").html(res.header);
+              $("#second-section-content").html(res.content);
+              //$("#second-section-img").attr('src', res.image);
+              
+              $("#second-section-items").html('');
+              var itemList = "";
+              $.each(res.subitem,function(index,val){
+                itemList +="<li><i class='icon ion-ios-checkmark-circle'></i> "+ val.item +"</li>"                       
+              });  
+
+              $("#second-section-items").append(itemList);              
+              
+            });
+          }
+        });
+      }
+
+      function FewReasons(){
+        $.ajax({  
+          url: APIURL + 'home/fewreasons',  
+          type: 'GET',  
+          success: function(data) {            
+            $.each(data,function(index,res){
+              if(res.visible == "true"){
+                $("#few-reasons-section").show();
+              }
+              else{
+                $("#few-reasons-section").hide();
+              }
+              
+              $("#few-reasons-hdr").html(res.mainheader);
+             
+              $("#few-reson-items").html('');
+              var itemList = "";
+              itemList +="<div class='row'>"
+              $.each(res.grid,function(index,val){
+                itemList +="<div class='col-md-4'>"
+                itemList +="<div class='landing-feature-item'>"
+                itemList +="<img src="+ val.gridimage +" alt=''>"
+                itemList +="<h3>"+ val.gridheader +"</h3>"
+                itemList +="<p>"+ val.gridcontent +"</p>"
+                itemList +="</div></div>"                       
+              });  
+              itemList +="</div>"
+              $("#few-reson-items").append(itemList);              
+              
+            });
+          }
+        });
+      }
+
+      function FewSteps(){
+        $.ajax({  
+          url: APIURL + 'home/fewstep',  
+          type: 'GET',  
+          success: function(data) {        
+            $.each(data,function(index,res){
+              if(res.visible == "true"){
+                $("#few-step-section").show();
+              }
+              else{
+                $("#few-step-section").hide();
+              }
+              
+              $("#few-step-hdr").html(res.mainheader);
+             
+              $("#few-step-items").html('');
+              var itemList = "";
+              itemList +="<div class='row'>"
+              $.each(res.grid,function(index,val){
+                var rowCount = index+1
+                itemList +="<div class='col-md-4'>"         
+                itemList +="<div class='landing-feature-item'>"
+                itemList +="<img src="+ val.gridimage +" alt=''>"
+                itemList +="<span>"+ rowCount +"</span>"
+                itemList +="<h3>"+ val.gridheader +"</h3>"
+                itemList +="</div></div>"                       
+              });  
+              itemList +="</div>"
+              $("#few-step-items").append(itemList);              
+              
+            });
+          }
+        });
+      }
+
+      function WeAccept(){
+        $.ajax({  
+          url: APIURL + 'home/weaccept',  
+          type: 'GET',  
+          success: function(data) {            
+            $.each(data,function(index,res){
+              if(res.visible == "true"){
+                $("#we-accept-section").show();
+              }
+              else{
+                $("#we-accept-section").hide();
+              }
+              
+              $("#we-accept-hdr").html(res.header);
+             
+              $("#accept-items").html('');
+              var itemList = "";
+              itemList +="<div class='row'>"
+              $.each(res.images,function(index,val){
+                var rowCount = index+1
+                itemList +="<div class='col-md-2'>"        
+                itemList +="<img src="+ val.images +" alt=''>"                
+                itemList +="</div>"                       
+              });  
+              itemList +="</div>"
+              $("#accept-items").append(itemList);              
+              
+            });
+          }
+        });
+      }
+
+      function Footer(){
+        $.ajax({  
+          url: APIURL + 'home/footer',  
+          type: 'GET',  
+          success: function(data) {            
+            $.each(data,function(index,res){
+              if(res.visible == "true"){
+                $("#footer").show();
+              }
+              else{
+                $("#footer").hide();
+              }              
+             
+              $("#footer-content").html('');
+              var itemList = "";
+              $.each(res.items,function(index,val){            
+                itemList +="<p>"+ val.item +"</p>"                                            
+              });  
+              itemList +="</div>"
+              $("#footer-content").append(itemList);              
+              
+            });
+          }
+        });
+      }
+
+
+    });
+  </script>
+
+
+</body>
 </html>

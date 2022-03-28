@@ -2,12 +2,42 @@ const express = require('express');
 const router = express.Router();
 const weAcceptItemsDetails = require('../../model/home/weacceptitems');
 const verifyTokens = require('../verifyTokens/verifyTokens');
+const multer = require('multer');
+
+const date = Date.now();
+
+//define storage for the image
+const storage = multer.diskStorage({
+    // destination for file
+    destination:function(reqest,file,callback){
+        callback(null,'../uploads/weaccept');
+    },
+
+    //add back the extension
+    filename: function(reqest,file,callback){           
+        const originalName = file.originalname.split(' ').join('');
+        callback(null, date + '-' + originalName.toLowerCase());
+    }   
+});
+
+//upload parameter for multer
+const upload = multer({
+    storage:storage,
+    limits:{
+       fileSize:1024*1024*3
+    }
+});
 
 // Creating one
-router.post('/weacceptitems/', async (req,res) => {
-
+router.post('/weacceptitems/', upload.single('images'), verifyTokens, async (req,res) => {
+    
+    const originalName = req.file.originalname.split(' ').join('');
     const weaccept = new weAcceptItemsDetails({
-        items:req.body.items      
+        images: {
+            data:req.file.filename,
+            contentType:'image/png',
+            fileName: date + '-' + originalName.toLowerCase()
+        } 
     });
    
     try {
@@ -39,11 +69,15 @@ router.get('/weacceptitems/:id',   getWeAcceptitemstems, (req,res) => {
 });
 
 // Updating one
-router.patch('/weacceptitems/:id',  getWeAcceptitemstems , async (req,res) => {
+router.patch('/weacceptitems/:id', verifyTokens, getWeAcceptitemstems , async (req,res) => {
     
-    if(req.body.items != null){
-        res.weacceptitems.items = req.body.items;
-    }    
+    const originalName = req.file.originalname.split(' ').join('');
+      
+    res.weacceptitems.image = {
+        data:req.file.filename,
+        contentType:'image/png',
+        fileName: date + '-' + originalName.toLowerCase()
+    }
 
     try {
        const updatedWeAcceptItems = await res.weacceptitems.save()

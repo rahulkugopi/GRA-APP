@@ -53,7 +53,7 @@ router.post('/first/', verifyTokens, upload.single('image'), async (req,res) => 
 });
 
 // Getting all
-router.get('/first/', verifyTokens, async (req,res) => {
+router.get('/first/', async (req,res) => {
     try {
         const first = await firstDetails.find();
         res.json(first);
@@ -73,7 +73,8 @@ router.get('/first/:id', verifyTokens,  getFirst, (req,res) => {
 
 // Updating one
 router.patch('/first/:id', verifyTokens, upload.single('image'), getFirst , async (req,res) => {
-    
+   
+    const originalName = req.file.originalname.split(' ').join('');
     if(req.body.visible != null){
         res.first.visible = req.body.visible;
     }
@@ -83,10 +84,16 @@ router.patch('/first/:id', verifyTokens, upload.single('image'), getFirst , asyn
     if(req.body.content != null){
         res.first.content = req.body.content;
     }   
-    if(req.body.image != null){
-        res.first.filename = req.file.filename;
-    }
+    //if(req.body.image != null){
+        res.first.image = {
+            data:req.file.filename,
+            contentType:'image/png',
+            fileName: date + '-' + originalName.toLowerCase()
+        }
+        
+    //}
 
+    console.log('res', res);
     
     try {
        const updatedFirst = await res.first.save()

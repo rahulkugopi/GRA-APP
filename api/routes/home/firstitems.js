@@ -20,7 +20,7 @@ router.post('/firstitems/', verifyTokens, async (req,res) => {
 });
 
 // Getting all
-router.get('/firstitems/', verifyTokens, async (req,res) => {
+router.get('/firstitems/',  async (req,res) => {
     try {
         const firstitems = await firstItemsDetails.find();
         res.json(firstitems);

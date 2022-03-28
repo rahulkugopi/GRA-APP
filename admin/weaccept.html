@@ -62,51 +62,50 @@
         </div>  
       </div>
       
-      <div class="inner-grd">       
+      <div class="inner-grd" id="inner-id">       
         <div class="row">
           <div class="col-md-12">
-            <table class="table table-bordered">              
-              <tbody>
-                <tr>
-                  <td>
-                    <label>Visiblity</label>
-                    <input type="checkbox" class="form-control" id="visible" disabled/>
-                  </td>
-                  <td>
-                    <label>Header</label>
-                    <input type="text" class="form-control" id="header" disabled/>
-                  </td>                  
-                </tr>               
-                <tr>
-                  <td colspan="2">
-                    <div class="row">
-                      <div class="col-md-10">
-                        <label>Add Images</label>
-                        <input type="text" class="form-control" id="add-item-input" />
-                        <div class="item-list">
-                          <ul id="item-list"></ul>
+            <form enctype="multipart/form-data">
+              <table class="table table-bordered">              
+                <tbody>
+                  <tr>
+                    <td>
+                      <label>Visiblity</label>
+                      <input type="checkbox" class="form-control" id="visible" disabled/>
+                    </td>
+                    <td>
+                      <label>Header</label>
+                      <input type="text" class="form-control" id="header" disabled/>
+                    </td>                  
+                  </tr>               
+                  <tr>
+                    <td colspan="2">
+                      <div class="row">
+                        <div class="col-md-10">
+                          <label>Add Images</label>                        
+                          <input type="file" class="form-control" id="add-item-input" name="images" style="padding: 3px;"/>
+                          <div class="item-list">
+                            <ul id="item-list"></ul>
+                          </div>
                         </div>
-                      </div>
-                      <div class="col-md-2">
-                        <button type="button" class="btn-2 add-item-btn" id="add-item-btn">Add Item</button>
-                      </div>  
-                    </div>                                      
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2">
-                    <button type="button" class="btn-2" id="submit-btn">Submit</button>
-                    <button type="button" class="btn-2" id="edit-btn">Edit</button>
-                    <button type="button" class="btn-1" id="cancel-btn">Cancel</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                        <div class="col-md-2">
+                          <button type="button" class="btn-2 add-item-btn" id="add-item-btn">Add Item</button>
+                        </div>  
+                      </div>                                      
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      <button type="button" class="btn-2" id="submit-btn">Submit</button>
+                      <button type="button" class="btn-2" id="edit-btn">Edit</button>
+                      <button type="button" class="btn-1" id="cancel-btn">Cancel</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </form>
           </div>
         </div>
-
-       
-
       </div>
       </div>
     </div>    
@@ -121,6 +120,8 @@
   <script>
     $(document).ready(function(){
     
+      var accessToken = localStorage.getItem('accessToken');     
+
       loadData();
       itemsLoad();
       $("#submit-btn").hide();
@@ -136,6 +137,7 @@
                 $("#loader").hide();               
                 $("#header").val(res.header);
                 $("#submit-btn").attr('data-id',res._id);
+                $("#inner-id").attr('data-id',res._id);
                 if(res.visible == "true"){
                   $("#visible").prop('checked' , true);
                   checkedVisibile = "true";
@@ -159,8 +161,9 @@
           success: function(data) {  
             var itemList = "";  
             $("#item-list").html('');
-            $.each(data, function(index,val){                  
-              itemList +="<li id="+ val._id +"><div class='row'><div class='col-sm-9'><input class='additem form-control' value="+ val.items +" disabled></div> <div class='col-sm-3'><button type='button' class='btn-2 row-edit-btn' id="+ val._id +" >Edit</button> <button type='button' class='btn-2 row-update-btn' id="+ val._id +" style='display:none;'>Update</button> <button type='button' class='btn-1 row-delete-btn'  id="+ val._id +" >Delete</button></div></div></li>"                       
+            $.each(data, function(index,val){  
+              console.log(val)                
+              itemList +="<li id="+ val._id +"><div class='row'><div class='col-sm-4'><input class='additem form-control' value="+ ImageFilePath + val.images.fileName +" disabled></div><div class='col-sm-3'><form enctype='multipart/form-data'><input type='file' class='additem form-control files' name='images' style='padding: 3px;' disabled></form></div><div class='col-sm-2'><img src="+ ImageFilePath + 'weaccept/' + val.images.fileName +" width='70'/></div> <div class='col-sm-3'><button type='button' class='btn-2 row-edit-btn' id="+ val._id +" >Edit</button> <button type='button' class='btn-2 row-update-btn' id="+ val._id +" style='display:none;'>Update</button> <button type='button' class='btn-1 row-delete-btn'  id="+ val._id +" >Delete</button></div></div></li>"                       
             });                  
             $("#item-list").append(itemList);
           }
@@ -169,27 +172,34 @@
 
       $("#add-item-btn").click(function(){
         $("#loader").show();  
+        var currentID = $("#inner-id").attr('data-id');
         var addItems = $("#add-item-input").val();
         if(addItems == ""){
           $("#add-item-input").addClass('validation');
+          $("#loader").hide();  
           return;
         }     
-
-        var data = {
-          'items':addItems       
-        }
+        var imageFiles = $("#add-item-input")[0].files[0];
+        var data = new FormData();
+        data.append('images', imageFiles);      
 
         $.ajax({  
           url: APIURL + 'home/weacceptitems',  
           type: 'POST',  
-          data : JSON.stringify(data),
-          contentType: 'application/json',
+          beforeSend: function (xhr){ 
+            xhr.setRequestHeader('Authorization',accessToken); 
+          },
+          data : data,
+          contentType: false,
+          processData: false,
           success: function(data) {  
             itemsLoad();
-            $("#loader").hide(); 
-            //inputCheck(true); 
+            $("#loader").hide();  
             $("#add-item-input").val('');
-          }
+          },
+          error: function(error){
+            console.log(error)  
+          } 
         });
       });  
 
@@ -206,17 +216,22 @@
           $($that).hide();
           $($that).closest('li').find('div button.row-edit-btn').show();
           var currentID = $($that).attr('id');
-          var currentData = $($that).closest('li').find('div input').val();
+          
           $($that).closest('li').find('div input').prop('disabled', true);
-          var data = {
-              'items':currentData       
-            }
+          var currentData = $($that).closest('li').find('div input.files').currentData[0].files[0];         
+          console.log(currentData)
+          var data = new FormData();
+          data.append('images', currentData);     
 
           $.ajax({  
             url: APIURL + 'home/weacceptitems/'+currentID,  
-            type: 'PATCH',  
-            data : JSON.stringify(data),
-            contentType: 'application/json',
+            type: 'PATCH', 
+            beforeSend: function (xhr){ 
+              xhr.setRequestHeader('Authorization',accessToken); 
+            }, 
+            data : data,
+            contentType: false,
+            processData: false,
             success: function(data) {          
               itemsLoad()
               $("#loader").hide();    

@@ -1,12 +1,7 @@
 const mongoose = require('mongoose');
 
-const weAcceptItemsSchema = new mongoose.Schema({
-    items:{
-        type: String,
-        required: true,
-        min:6,
-        max:255
-    }
+const weAcceptItemsSchema = new mongoose.Schema({   
+    images:{ data:Buffer, contentType:String, fileName:String }    
 });
 
 module.exports = mongoose.model('weAcceptItemsDetails', weAcceptItemsSchema);

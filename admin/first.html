@@ -65,65 +65,67 @@
       <div class="inner-grd" id="inner-id">       
         <div class="row">
           <div class="col-md-12">
-            <table class="table table-bordered">              
-              <tbody>
-                <tr>
-                  <td>
-                    <label>Visiblity</label>
-                    <input type="checkbox" class="form-control" id="visible" disabled/>
-                  </td>
-                  <td>
-                    <label>Header</label>
-                    <input type="text" class="form-control" id="header" disabled/>
-                  </td>
-                  <td>
-                    <label>Images</label>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <input type="text" class="form-control" id="image" disabled/>
-                        <div class="btn-section">
-                          <button type='button' class='btn-2 btn-small' id="delete-img" disabled>Delete</button>
-                          <label for="add-image" class='btn-2 btn-small' id="add-image-label">Add Image</label>
-                          <input type="file" id="add-image" class="file-hidden" />
-                        </div>                        
-                      </div>
-                      <div class="col-md-6">
-                        <img src="" id="img-view" width="300"/>
-                      </div>
-                    </div>                    
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="3">
-                    <label>Content</label>
-                    <input type="text" class="form-control" id="content" disabled/>
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="3">
-                    <div class="row">
-                      <div class="col-md-10">
-                        <label>Sub Item</label>
-                        <input type="text" class="form-control" id="add-item-input" disabled/>
-                        <div class="item-list">
-                          <ul id="item-list"></ul>
+            <form enctype="multipart/form-data">
+              <table class="table table-bordered">              
+                <tbody>
+                  <tr>
+                    <td>
+                      <label>Visiblity</label>
+                      <input type="checkbox" class="form-control" id="visible" disabled/>
+                    </td>
+                    <td>
+                      <label>Header</label>
+                      <input type="text" class="form-control" id="header" disabled/>
+                    </td>
+                    <td>
+                      <label>Images</label>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <input type="text" class="form-control" id="image" disabled/>
+                          <div class="btn-section">
+                            <button type='button' class='btn-2 btn-small' id="delete-img" disabled style="display: none;">Delete</button>
+                            <label for="add-image" class='btn-2 btn-small' id="add-image-label">Add Image</label>                                                       
+                              <input type="file" id="add-image" class="file-hidden" name="image" />                                                                                                                                             
+                          </div>                        
                         </div>
-                      </div>
-                      <div class="col-md-2">
-                        <button type="button" class="btn-2 add-item-btn" id="add-item-btn" disabled>Add Item</button>
-                      </div>  
-                    </div>                                      
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2">
-                    <button type="button" class="btn-2" id="submit-btn">Submit</button>
-                    <button type="button" class="btn-2" id="edit-btn">Edit</button>
-                    <button type="button" class="btn-1" id="cancel-btn">Cancel</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                        <div class="col-md-6">
+                          <img src="" id="img-view" width="300"/>
+                        </div>
+                      </div>                    
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="3">
+                      <label>Content</label>
+                      <input type="text" class="form-control" id="content" disabled/>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="3">
+                      <div class="row">
+                        <div class="col-md-10">
+                          <label>Sub Item</label>
+                          <input type="text" class="form-control" id="add-item-input" disabled/>
+                          <div class="item-list">
+                            <ul id="item-list"></ul>
+                          </div>
+                        </div>
+                        <div class="col-md-2">
+                          <button type="button" class="btn-2 add-item-btn" id="add-item-btn" disabled>Add Item</button>
+                        </div>  
+                      </div>                                      
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      <button type="button" class="btn-2" id="submit-btn">Submit</button>
+                      <button type="button" class="btn-2" id="edit-btn">Edit</button>
+                      <button type="button" class="btn-1" id="cancel-btn">Cancel</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </form> 
           </div>
         </div>    
       </div>
@@ -160,11 +162,11 @@ $(document).ready(function(){
       },
       success: function(data) {                  
          $.each(data,function(index,res){
-            var filePath = "../uploads/firstsection/";
+            
             $("#loader").hide();           
             $("#header").val(res.header);
-            $("#image").val(filePath + res.image.fileName);
-            $("#img-view").attr('src', filePath + res.image.fileName);
+            $("#image").val(ImageFilePath + 'firstsection/' + res.image.fileName);
+            $("#img-view").attr('src', ImageFilePath + 'firstsection/' + res.image.fileName);
             $("#content").val(res.content);
             $("#submit-btn").attr('data-id',res._id);
             $("#inner-id").attr('data-id',res._id);
@@ -187,9 +189,7 @@ $(document).ready(function(){
   $("#add-image").change(function(){
     $("#loader").show();  
     var currentID = $("#inner-id").attr('data-id');
-    alert(currentID)
     var imageFiles = $(this)[0].files[0];
-    console.log(imageFiles)
     var data = new FormData();
     data.append('image', imageFiles);
     $.ajax({  
@@ -198,8 +198,9 @@ $(document).ready(function(){
       beforeSend: function (xhr){ 
         xhr.setRequestHeader('Authorization',accessToken); 
       },
-      data : JSON.stringify(data),
-      contentType: 'application/json',
+      data : data,
+      contentType: false,
+      processData: false,
       success: function(data) {  
         $("#loader").hide();      
       },

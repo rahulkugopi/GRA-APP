@@ -350,12 +350,10 @@
               else{
                 $("#first-section").hide();
               }
-              
+              console.log(res)
               $("#first-section-hdr").html(res.header);
-              $("#first-section-content").html(res.content);
-              $("#first-section-img").attr('src', res.image);
-              
-                          
+              $("#first-section-content").html(res.content); 
+              $("#first-section-img").attr('src', ImageFilePath + 'firstsection/' +  res.image.fileName);                                     
             });
           }
         });
@@ -486,7 +484,7 @@
           url: APIURL + 'home/weaccept',  
           type: 'GET',  
           success: function(data) {            
-            $.each(data,function(index,res){
+            $.each(data,function(index,res){              
               if(res.visible == "true"){
                 $("#we-accept-section").show();
               }
@@ -508,9 +506,10 @@
               var itemList = "";
               itemList +="<div class='row'>"
               $.each(data,function(index,val){
+                console.log('val',val)
                 var rowCount = index+1
                 itemList +="<div class='col-md-2'>"        
-                itemList +="<img src="+ val.items +" alt=''>"                
+                itemList +="<img src="+ ImageFilePath + 'weaccept/' + val.images.fileName +" alt=''>"                
                 itemList +="</div>"                       
               });  
               itemList +="</div>"

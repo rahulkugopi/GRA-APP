@@ -9,8 +9,7 @@ router.post('/weaccept/', async (req,res) => {
     //create new banner
     const weaccept = new weacceptDetails({
         visible:req.body.visible,
-        header: req.body.header,
-        images:req.body.images
+        header: req.body.header     
     });
    
     try {
@@ -50,9 +49,6 @@ router.patch('/weaccept/:id',  getWeAccept , async (req,res) => {
     if(req.body.header != null){
         res.weaccept.header = req.body.header;
     }    
-    if(req.body.images != null){
-        res.weaccept.images = req.body.images;
-    }
 
     try {
        const updatedWeAccept = await res.weaccept.save()

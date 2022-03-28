@@ -12,10 +12,7 @@ const weacceptSchema = new mongoose.Schema({
         required: true,
         min:6,
         max:255
-    },    
-    images: [{    
-        images:{ type: String, required: true }
-    }]
+    }    
 });
 
 module.exports = mongoose.model('weacceptDetails', weacceptSchema);

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>GXSquare Trade with trust.</title>
+  <link rel="icon" href="assets/img/favicon.png" type="image/x-icon">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+  <div class="loading-section" id="loader">
+    <div class="loader"></div>
+  </div>
+  <header>
+    <nav class="navbar navbar-expand-lg container">
+      <a class="navbar-brand" href="index.html"><img src="assets/img/logo-dark.svg" alt="logo"></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#headerMenu"
+        aria-controls="headerMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="icon ion-md-menu"></i>
+      </button>
+
+      <div class="collapse navbar-collapse" id="headerMenu">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link" href="index.html" role="button">
+              Home
+            </a>
+          </li>  
+        </ul>
+        <ul class="navbar-nav pull-right">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
+              aria-expanded="false">
+              <img src="./assets/img/avatar.svg" width="35"/>
+              <span class="nav-user" id="user-name"></span>
+            </a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="login.html">Logout</a>              
+            </div>
+          </li>
+        </ul>         
+      </div>
+    </nav>
+  </header>
+
+  <div class="inner-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h2 class="hdr">User View</h2>    
+        </div>  
+
+        <div class="col-md-12">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+              <li class="breadcrumb-item active" aria-current="page">User View</li>
+            </ol>
+          </nav>
+        </div>
+
+        <div class="col-md-12">
+          <div class="alert-view" id="alert-view"></div>
+        </div>
+      </div>
+      
+      <div class="inner-grd" id="inner-id">       
+        <div class="row">
+          <div class="col-md-12">
+            <table class="table table-bordered">              
+              <tbody>
+                <tr>                  
+                  <td>
+                    <label>UserName</label>
+                    <input type="text" class="form-control" id="name" autocomplete="off"/>
+                  </td>
+                  <td>
+                    <label>Password</label>
+                    <input type="password" class="form-control" id="password" autocomplete="off"/>
+                  </td>
+                  <td>
+                    <label>Confirm Password</label>
+                    <input type="password" class="form-control" id="confirmpassword" autocomplete="off"/>
+                  </td>
+                  <td>
+                    <label>Email</label>
+                    <input type="email" class="form-control" id="email" autocomplete="off"/>
+                  </td>
+                </tr>                              
+                <tr>
+                  <td colspan="2">
+                    <button type="button" class="btn-2" id="create-user-btn">Create New User</button>
+                    <button type="button" class="btn-1" id="cancel-btn">Cancel</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-md-12" style="margin-top: 10px;">
+            <table class="table table-bordered table-stripped tb-hdr">   
+              <thead>
+                <tr>
+                  <th width="5%">#</th>
+                  <th>UserName</th>
+                  <th>Email</th>
+                  <th width="22%"></th>
+                </tr>
+              </thead>           
+              <tbody id="user-details"></tbody>
+            </table>      
+        </div>    
+      </div>
+      </div>
+    </div>    
+  </div>
+
+  <script src="assets/js/jquery-3.4.1.min.js"></script>
+  <script src="assets/js/popper.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/amcharts-core.min.js"></script>
+  <script src="assets/js/amcharts.min.js"></script>
+  <script src="assets/js/custom.js"></script>
+  <script src="assets/js/SITEURL.js"></script>
+  <script src="assets/js/loginconfig.js"></script>
+
+  <script>
+    $(document).ready(function(){
+        
+      var accessToken = localStorage.getItem('accessToken');      
+      $("#alert-view").hide();
+
+      loadData();
+
+      function loadData(){
+        $("#loader").show();  
+        $.ajax({  
+          url: APIURL + 'users/register',  
+          type: 'GET',                  
+          beforeSend: function (xhr){ 
+              xhr.setRequestHeader('Authorization',accessToken); 
+          },
+          success: function(data) {  
+            $("#user-details").html('');    
+            $("#loader").hide();                                                                                  
+            $.each(data,function(index,res){              
+                var rowcout = index+1
+                var itemList = "";
+                itemList +="<tr>"
+                itemList +="<td>"+ rowcout +"</td>"
+                itemList +="<td><input type='text' class='form-control' value="+ res.name +" disabled/></td>"
+                itemList +="<td><input type='text' class='form-control' value="+ res.email +" disabled /></td>"
+                itemList +="<td align='center'><button type='button' class='btn-2 row-edit-btn' id="+ res._id +">Edit</button> <button type='button' class='btn-2 row-update-btn' style='display:none;' id="+ res._id +">Update</button> <button type='button' class='btn-1 row-delete-btn' id="+ res._id +">Delete</button></td>"
+                itemList +="</tr>"                    
+                $("#user-details").append(itemList);
+            });
+
+          },
+          error: function(error){            
+            $("#alert-view").show().html('<p>'+ error.responseJSON.message +'</p>');
+          }  
+        });  
+      }     
+
+      $("#email").change(function(){
+        var email = $(this).val();
+        ValidateEmail(email);  
+      });
+
+      $('#confirmpassword').on('keyup',function(){
+        var confirmpassword = $(this).val();
+        var password = $("#password").val();
+        if(confirmpassword != password){
+          $(this).addClass('validation');
+          $("#alert-view").show().html('<p>Please make sure your password match!</p>');
+        }
+        else{
+          $(this).removeClass('validation');
+          $("#alert-view").hide().html('');
+        }       
+      });
+    
+      $("#create-user-btn").click(function(){
+        $("#loader").show();  
+        var name = $("#name").val();
+        var password = $("#password").val();
+        var confirmpassword = $("#confirmpassword").val();
+        var email = $("#email").val();
+        if(name == ""){
+          $("#name").addClass('validation').focus();
+          return;
+        }  
+
+        if(name == ""){
+          $("#name").addClass('validation').focus();
+          return;
+        }  
+
+        if(password == ""){
+          $("#password").addClass('validation').focus();
+          return;
+        } 
+        
+        if(confirmpassword == ""){
+          $("#confirmpassword").addClass('validation').focus();
+          return;
+        } 
+
+        if(email == ""){
+          $("#email").addClass('validation').focus();
+        }  
+                
+        var data = {
+          'name':name,
+          'password':confirmpassword,
+          'email':email     
+        }
+
+        $.ajax({  
+          url: APIURL + 'users/register',  
+          type: 'POST',  
+          data : JSON.stringify(data),
+          contentType: 'application/json',
+          beforeSend: function (xhr){ 
+              xhr.setRequestHeader('Authorization',accessToken); 
+          },
+          success: function(data) {  
+            loadData();      
+            clearFileds();
+            $("#loader").hide(); 
+          },
+          error: function(error){            
+            $("#alert-view").show().html('<p>'+ error.responseJSON.message +'</p>');
+            $("#loader").hide(); 
+          } 
+        });
+      });      
+
+      $("#user-details").on('click', 'button.row-edit-btn', function(){
+        $(this).hide();
+        $(this).closest('tr').find('td input').prop('disabled', false);
+        $(this).closest('tr').find('td button.row-update-btn').show();
+      }); 
+
+      $("#user-details").on('click', 'button.row-update-btn', function(){
+          var $that = this;
+          var currentID = $($that).attr('id');
+          $("#loader").show();    
+          $($that).hide();
+          $($that).closest('tr').find('td button.row-edit-btn').show();         
+          var name = $($that).closest('tr').find('td:nth-child(2) input').val();
+          var email = $($that).closest('tr').find('td:nth-child(3) input').val();
+          $($that).closest('tr').find('div input').prop('disabled', true);
+          
+          var data = {
+              'name':name,
+              'email':email    
+          }
+          
+          $.ajax({  
+            url: APIURL + 'users/register/'+currentID,  
+            type: 'PATCH',  
+            beforeSend: function (xhr){ 
+              xhr.setRequestHeader('Authorization',accessToken); 
+            },
+            data : JSON.stringify(data),
+            contentType: 'application/json',
+            success: function(data) {          
+              loadData();
+              $("#loader").hide();    
+              
+            },
+            error: function(error){
+              console.log(error)  
+            }  
+          });  
+      });
+      
+      $("#user-details").on('click', 'button.row-delete-btn', function(){
+          var currentID = $(this).attr('id');
+          $("#loader").show();  
+          $.ajax({  
+            url: APIURL + 'users/register/'+currentID,  
+            type: 'DELETE',    
+            beforeSend: function (xhr){ 
+              xhr.setRequestHeader('Authorization',accessToken); 
+            },     
+            success: function(data) {  
+              loadData();
+              $("#loader").hide();                     
+            }
+          });
+      });
+             
+      $("#cancel-btn").click(function(){       
+        $("#name").val('');
+        $("#password").val('');
+        $("#confirmpassword").val('');
+        $("#email").val('');
+      });
+    
+      function inputCheck(evt){
+        $("input , button").prop('disabled',evt);
+      }
+
+      function clearFileds(){
+        $("input").val('');
+      }
+    
+      $("input").keydown(function(){
+        $("input").removeClass('validation');
+      });
+
+      
+
+      function ValidateEmail(mail) {
+          if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)){
+            $('#email').removeClass('validation');
+            $("#alert-view").hide().html('');
+              return (true);                
+          }                      
+          $('#email').addClass('validation').focus();
+          $("#alert-view").show().html('<p>You have entered an invalid email address!</p>');
+          return (false);
+      }      
+
+    
+    });
+    </script>  
+</body>
+</html>

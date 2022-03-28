@@ -2,16 +2,46 @@ const express = require('express');
 const router = express.Router();
 const firstDetails = require('../../model/home/first');
 const verifyTokens = require('../verifyTokens/verifyTokens');
+const multer = require('multer');
+
+const date = Date.now();
+
+//define storage for the image
+const storage = multer.diskStorage({
+    // destination for file
+    destination:function(reqest,file,callback){
+        callback(null,'../uploads/firstsection');
+    },
+
+    //add back the extension
+    filename: function(reqest,file,callback){           
+        const originalName = file.originalname.split(' ').join('');
+        callback(null, date + '-' + originalName.toLowerCase());
+    }   
+});
+
+//upload parameter for multer
+const upload = multer({
+    storage:storage,
+    limits:{
+       fileSize:1024*1024*3
+    }
+});
+
 
 // Creating one
-router.post('/first/', async (req,res) => {
+router.post('/first/', verifyTokens, upload.single('image'), async (req,res) => {
 
+    const originalName = req.file.originalname.split(' ').join('');
     const first = new firstDetails({
         visible:req.body.visible,
         header: req.body.header,
         content: req.body.content,
-        image: req.body.image,
-        subitem: req.body.subitem
+        image: {
+            data:req.file.filename,
+            contentType:'image/png',
+            fileName: date + '-' + originalName.toLowerCase()
+        }     
     });
    
     try {
@@ -20,11 +50,10 @@ router.post('/first/', async (req,res) => {
     } catch (error) {
       res.status(400).json({message : error});   
     }
-
 });
 
 // Getting all
-router.get('/first/', async (req,res) => {
+router.get('/first/', verifyTokens, async (req,res) => {
     try {
         const first = await firstDetails.find();
         res.json(first);
@@ -34,7 +63,7 @@ router.get('/first/', async (req,res) => {
 });
 
 // Getting one
-router.get('/first/:id',   getFirst, (req,res) => {
+router.get('/first/:id', verifyTokens,  getFirst, (req,res) => {
     try {
         res.json(res.first);
     } catch (error) {
@@ -43,7 +72,7 @@ router.get('/first/:id',   getFirst, (req,res) => {
 });
 
 // Updating one
-router.patch('/first/:id',  getFirst , async (req,res) => {
+router.patch('/first/:id', verifyTokens, upload.single('image'), getFirst , async (req,res) => {
     
     if(req.body.visible != null){
         res.first.visible = req.body.visible;
@@ -55,22 +84,20 @@ router.patch('/first/:id',  getFirst , async (req,res) => {
         res.first.content = req.body.content;
     }   
     if(req.body.image != null){
-        res.first.image = req.body.image;
-    }
-    if(req.body.subItem != null){
-        res.first.subItem = req.body.subItem;
+        res.first.filename = req.file.filename;
     }
 
+    
     try {
        const updatedFirst = await res.first.save()
-       res.json(updatedFirst) ;
+       res.json(updatedFirst);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 });
 
 // Deleting one
-router.delete('/first/:id',  getFirst, async (req,res) => {
+router.delete('/first/:id', verifyTokens,  getFirst, async (req,res) => {
     try {
         await res.first.remove();
         res.json({ message: 'Deleted Users' });

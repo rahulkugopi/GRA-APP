@@ -35,7 +35,7 @@
             <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
               aria-expanded="false">
               <img src="./assets/img/avatar.svg" width="35"/>
-              <span class="nav-user">Test User</span>
+              <span class="nav-user" id="user-name"></span>
             </a>
             <div class="dropdown-menu">
               <a class="dropdown-item" href="login.html">Logout</a>              
@@ -55,7 +55,7 @@
         <div class="col-md-12">
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="home.html">Home</a></li>
+              <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
               <li class="breadcrumb-item active" aria-current="page">First Section</li>
             </ol>
           </nav>
@@ -111,7 +111,6 @@
                       </div>
                       <div class="col-md-2">
                         <button type="button" class="btn-2 add-item-btn" id="add-item-btn" disabled>Add Item</button>
-                        <button type="button" class="btn-2 add-item-btn" id="update-item-btn" disabled>Update Item</button>
                       </div>  
                     </div>                                      
                   </td>
@@ -139,33 +138,36 @@
   <script src="assets/js/amcharts.min.js"></script>
   <script src="assets/js/custom.js"></script>
   <script src="assets/js/SITEURL.js"></script>
-
+  <script src="assets/js/loginconfig.js"></script>
 
 
 
 <script>
 $(document).ready(function(){
 
+  var accessToken = localStorage.getItem('accessToken');      
+
   loadData();
+  itemsLoad();
   $("#submit-btn").hide();
-  $("#update-item-btn").hide();
-  $("#delete-img").hide();
-  $("#add-image-label").hide();
   
   function loadData(){
     $.ajax({  
       url: APIURL + 'home/first',  
       type: 'GET',  
-      success: function(data) {  
-        console.log(data);
+      beforeSend: function (xhr){ 
+          xhr.setRequestHeader('Authorization',accessToken); 
+      },
+      success: function(data) {                  
          $.each(data,function(index,res){
-            $("#loader").hide();
-            $("#item-list").html('');
+            var filePath = "../uploads/firstsection/";
+            $("#loader").hide();           
             $("#header").val(res.header);
-            $("#image").val(res.image);
-            $("#img-view").attr('src',res.image);
+            $("#image").val(filePath + res.image.fileName);
+            $("#img-view").attr('src', filePath + res.image.fileName);
             $("#content").val(res.content);
             $("#submit-btn").attr('data-id',res._id);
+            $("#inner-id").attr('data-id',res._id);
             if(res.visible == "true"){
               $("#visible").prop('checked' , true);
             }
@@ -173,13 +175,7 @@ $(document).ready(function(){
               $("#visible").prop('checked' , false);
             }
             
-            var itemList = "";
-            $.each(res.subitem,function(index,val){
-              itemList +="<li id="+ val._id +"><span class='additem'>"+ val.item +"</span> <button type='button' class='btn-2 btn-small' disabled>Delete</button> <button type='button' class='btn-2 btn-small row-edit-btn' id="+ val.item +" disabled>Edit</button></li>"                       
-            });  
-
-            $("#item-list").append(itemList);
-
+            
          })
       },
       error: function(error){
@@ -188,41 +184,155 @@ $(document).ready(function(){
     });  
   }
 
+  $("#add-image").change(function(){
+    $("#loader").show();  
+    var currentID = $("#inner-id").attr('data-id');
+    alert(currentID)
+    var imageFiles = $(this)[0].files[0];
+    console.log(imageFiles)
+    var data = new FormData();
+    data.append('image', imageFiles);
+    $.ajax({  
+      url: APIURL + 'home/first/'+currentID,  
+      type: 'PATCH',  
+      beforeSend: function (xhr){ 
+        xhr.setRequestHeader('Authorization',accessToken); 
+      },
+      data : JSON.stringify(data),
+      contentType: 'application/json',
+      success: function(data) {  
+        $("#loader").hide();      
+      },
+      error: function(error){
+        console.log(error)  
+      } 
+    }); 
+  });
+
+  function itemsLoad(){
+    $.ajax({  
+      url: APIURL + 'home/firstitems',  
+      type: 'GET', 
+      beforeSend: function (xhr){ 
+          xhr.setRequestHeader('Authorization',accessToken); 
+      }, 
+      success: function(data) {  
+        $("#item-list").html('');
+        var itemList = "";
+        $.each(data,function(index,val){
+          itemList +="<li id="+ val._id +"><div class='row'><div class='col-sm-9'><input class='additem form-control' value="+ val.items +" disabled></div> <div class='col-sm-3'><button type='button' class='btn-2 row-edit-btn' id="+ val._id +" >Edit</button> <button type='button' class='btn-2 row-update-btn' id="+ val._id +" style='display:none;'>Update</button> <button type='button' class='btn-1 row-delete-btn'  id="+ val._id +" >Delete</button></div></div></li>"                       
+        });  
+        $("#item-list").append(itemList);
+      },
+      error: function(error){
+        console.log(error)  
+      }  
+    });            
+  }
+
   $("#add-item-btn").click(function(){
-      var itemList = "";
+      $("#loader").show();  
       var addItems = $("#add-item-input").val();
       if(addItems == ""){
         $("#add-item-input").addClass('validation');
         return;
-      }
-      itemList +="<li><span class='additem'>"+ addItems +"</span> <button type='button' class='btn-2 btn-small'>Delete</button> <button type='button' class='btn-2 btn-small row-edit-btn' id="+ addItems +" >Edit</button></li>";
-      $("#item-list").append(itemList);
-      $("#add-item-input").val('');
-  });
+      }     
 
-  $("#update-item-btn").click(function(){
-    var addItems = $("#add-item-input").val();
+      var data = {
+        'items':addItems       
+      }
+
+      $.ajax({  
+        url: APIURL + 'home/firstitems',  
+        type: 'POST',
+        beforeSend: function (xhr){ 
+            xhr.setRequestHeader('Authorization',accessToken); 
+        },  
+        data : JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(data) {  
+          itemsLoad();
+          $("#loader").hide(); 
+          //inputCheck(true); 
+          $("#add-item-input").val('');
+        },
+        error: function(error){
+          console.log(error)  
+        }  
+      });
   });
 
   $("#item-list").on('click', 'button.row-edit-btn', function(){
-    var currentID = $(this).attr('id');
-    $("#add-item-input").val(currentID);
-    $("#update-item-btn").show();
+    $(this).hide();
+    $(this).closest('li').find('div input').prop('disabled', false);
+    $(this).closest('li').find('div button.row-update-btn').show();
     $("#add-item-btn").hide();
   });  
+
+  $("#item-list").on('click', 'button.row-update-btn', function(){
+    var $that = this;
+    $("#loader").show();    
+    $($that).hide();
+    $($that).closest('li').find('div button.row-edit-btn').show();
+    var currentID = $($that).attr('id');
+    var currentData = $($that).closest('li').find('div input').val();
+    $($that).closest('li').find('div input').prop('disabled', true);
+    var data = {
+        'items':currentData       
+      }
+
+    $.ajax({  
+      url: APIURL + 'home/firstitems/'+currentID,  
+      type: 'PATCH',  
+      beforeSend: function (xhr){ 
+          xhr.setRequestHeader('Authorization',accessToken); 
+      },
+      data : JSON.stringify(data),
+      contentType: 'application/json',
+      success: function(data) {          
+        itemsLoad()
+        $("#loader").hide();    
+        
+      },
+      error: function(error){
+        console.log(error)  
+      }  
+    });  
+  }); 
+
+  $("#item-list").on('click', 'button.row-delete-btn', function(){
+      var currentID = $(this).attr('id');
+      $("#loader").show();  
+      $.ajax({  
+        url: APIURL + 'home/firstitems/'+currentID,  
+        type: 'DELETE',  
+        beforeSend: function (xhr){ 
+            xhr.setRequestHeader('Authorization',accessToken); 
+        },       
+        success: function(data) {  
+          itemsLoad();
+          $("#loader").hide();                     
+        }
+      });
+  });
+
 
   $("#edit-btn").click(function(){
     $(this).hide();
     inputCheck(false);
     $("#submit-btn").show();
     $("#delete-img").show();    
+    $(".row-edit-btn").show();
+    $(".row-delete-btn").show();
   });
 
   $("#cancel-btn").click(function(){
     inputCheck(true);
     $("#submit-btn").hide();
-    $("#edit-btn").show();
-    $("#delete-img").show();  
+    $("#edit-btn").show().prop('disabled', false);
+    $("#delete-img").hide();  
+    $(".row-edit-btn").hide();
+    $(".row-delete-btn").hide();
   });
 
   $("#delete-img").click(function(){
@@ -248,34 +358,23 @@ $(document).ready(function(){
     inputCheck(true);
     $("#edit-btn").prop('disabled', false);
     $("#submit-btn").show();
-
-    var arr = [];
     
     var header = $("#header").val();
     var image = $("#image").val();
     var content = $("#content").val();
-    var item ="";
-    var x = []
-    $("#item-list li").each(function(){
-      item = $(this).find('span.additem').text();      
-      var y = {}
-      if(item !=""){
-        y['item'] = item
-        arr.push(y)
-      }
-    });
 
     var data = {
       'visible':checkedVisibile,
       'header': header, 
-      'content' : content, 
-      'image':image,
-      'subitem':arr
+      'content' : content
     }
 
     $.ajax({  
       url: APIURL + 'home/first/'+currentID,  
       type: 'PATCH',  
+      beforeSend: function (xhr){ 
+          xhr.setRequestHeader('Authorization',accessToken); 
+      },
       data : JSON.stringify(data),
       contentType: 'application/json',
       success: function(data) {          

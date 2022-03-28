@@ -355,17 +355,23 @@
               $("#first-section-content").html(res.content);
               $("#first-section-img").attr('src', res.image);
               
-              $("#first-section-items").html('');
-              var itemList = "";
-              $.each(res.subitem,function(index,val){
-                itemList +="<li><i class='icon ion-ios-checkmark-circle'></i> "+ val.item +"</li>"                       
-              });  
-
-              $("#first-section-items").append(itemList);              
-              
+                          
             });
           }
         });
+
+        $.ajax({  
+          url: APIURL + 'home/firstitems',  
+          type: 'GET',  
+          success: function(data) {  
+            $("#first-section-items").html('');
+            var itemList = "";
+            $.each(data,function(index,val){
+                itemList +="<li><i class='icon ion-ios-checkmark-circle'></i> "+ val.items +"</li>"                       
+            });  
+            $("#first-section-items").append(itemList);    
+          }
+        });            
       }
 
       function SecondSection(){
@@ -385,17 +391,25 @@
               $("#second-section-content").html(res.content);
               //$("#second-section-img").attr('src', res.image);
               
-              $("#second-section-items").html('');
-              var itemList = "";
-              $.each(res.subitem,function(index,val){
-                itemList +="<li><i class='icon ion-ios-checkmark-circle'></i> "+ val.item +"</li>"                       
-              });  
-
-              $("#second-section-items").append(itemList);              
+                        
               
             });
           }
         });
+
+        $.ajax({  
+          url: APIURL + 'home/seconditems',  
+          type: 'GET',  
+          success: function(data) {  
+            $("#second-section-items").html('');
+              var itemList = "";
+              $.each(data,function(index,val){
+                itemList +="<li><i class='icon ion-ios-checkmark-circle'></i> "+ val.items +"</li>"                       
+              });  
+
+              $("#second-section-items").append(itemList);       
+          }
+        });    
       }
 
       function FewReasons(){
@@ -480,21 +494,27 @@
                 $("#we-accept-section").hide();
               }
               
-              $("#we-accept-hdr").html(res.header);
-             
+              $("#we-accept-hdr").html(res.header);                         
+              
+            });
+          }
+        });
+
+        $.ajax({  
+          url: APIURL + 'home/weacceptitems',  
+          type: 'GET',  
+          success: function(data) {                                   
               $("#accept-items").html('');
               var itemList = "";
               itemList +="<div class='row'>"
-              $.each(res.images,function(index,val){
+              $.each(data,function(index,val){
                 var rowCount = index+1
                 itemList +="<div class='col-md-2'>"        
-                itemList +="<img src="+ val.images +" alt=''>"                
+                itemList +="<img src="+ val.items +" alt=''>"                
                 itemList +="</div>"                       
               });  
               itemList +="</div>"
-              $("#accept-items").append(itemList);              
-              
-            });
+              $("#accept-items").append(itemList);                           
           }
         });
       }

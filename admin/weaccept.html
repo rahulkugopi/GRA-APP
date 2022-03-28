@@ -35,7 +35,7 @@
             <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
               aria-expanded="false">
               <img src="./assets/img/avatar.svg" width="35"/>
-              <span class="nav-user">Test User</span>
+              <span class="nav-user" id="user-name"></span>
             </a>
             <div class="dropdown-menu">
               <a class="dropdown-item" href="login.html">Logout</a>              
@@ -55,7 +55,7 @@
         <div class="col-md-12">
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="home.html">Home</a></li>
+              <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
               <li class="breadcrumb-item active" aria-current="page">We Accept</li>
             </ol>
           </nav>
@@ -82,13 +82,13 @@
                     <div class="row">
                       <div class="col-md-10">
                         <label>Add Images</label>
-                        <input type="text" class="form-control" />
+                        <input type="text" class="form-control" id="add-item-input" />
                         <div class="item-list">
                           <ul id="item-list"></ul>
                         </div>
                       </div>
                       <div class="col-md-2">
-                        <button type="button" class="btn-2 add-item-btn">Add Item</button>
+                        <button type="button" class="btn-2 add-item-btn" id="add-item-btn">Add Item</button>
                       </div>  
                     </div>                                      
                   </td>
@@ -114,7 +114,7 @@
 
   <script src="assets/js/jquery-3.4.1.min.js"></script>
   <script src="assets/js/SITEURL.js"></script>
-
+  <script src="assets/js/loginconfig.js"></script>
 
 
 
@@ -122,6 +122,7 @@
     $(document).ready(function(){
     
       loadData();
+      itemsLoad();
       $("#submit-btn").hide();
       var checkedVisibile = "";
 
@@ -129,13 +130,10 @@
         $.ajax({  
           url: APIURL + 'home/weaccept',  
           type: 'GET',  
-          success: function(data) {        
-           
-              $.each(data,function(index,res){
-                console.log(res)     
+          success: function(data) {                   
+              $.each(data,function(index,res){             
                 $("#edit-btn").prop('disabled' , false);
-                $("#loader").hide();
-                $("#item-list").html('');
+                $("#loader").hide();               
                 $("#header").val(res.header);
                 $("#submit-btn").attr('data-id',res._id);
                 if(res.visible == "true"){
@@ -145,17 +143,7 @@
                 else{
                   $("#visible").prop('checked' , false);
                   checkedVisibile = "false";
-                }
-                
-                var itemList = "";
-                itemList +=""
-    
-                $.each(res.images, function(index,val){                  
-                  itemList +="<li id="+ val._id +"><span class='additem'>"+ val.images +"</span> <button type='button' class='btn-2 btn-small' disabled>Delete</button> <button type='button' class='btn-2 btn-small row-edit-btn' id="+ val.images +" disabled>Edit</button></li>"                       
-                });  
-                    
-                $("#item-list").append(itemList);                    
-    
+                }                                                
               })
           },
           error: function(error){
@@ -163,6 +151,95 @@
           }  
         });  
       }
+
+      function itemsLoad(){
+        $.ajax({  
+          url: APIURL + 'home/weacceptitems',  
+          type: 'GET',  
+          success: function(data) {  
+            var itemList = "";  
+            $("#item-list").html('');
+            $.each(data, function(index,val){                  
+              itemList +="<li id="+ val._id +"><div class='row'><div class='col-sm-9'><input class='additem form-control' value="+ val.items +" disabled></div> <div class='col-sm-3'><button type='button' class='btn-2 row-edit-btn' id="+ val._id +" >Edit</button> <button type='button' class='btn-2 row-update-btn' id="+ val._id +" style='display:none;'>Update</button> <button type='button' class='btn-1 row-delete-btn'  id="+ val._id +" >Delete</button></div></div></li>"                       
+            });                  
+            $("#item-list").append(itemList);
+          }
+        });            
+      }
+
+      $("#add-item-btn").click(function(){
+        $("#loader").show();  
+        var addItems = $("#add-item-input").val();
+        if(addItems == ""){
+          $("#add-item-input").addClass('validation');
+          return;
+        }     
+
+        var data = {
+          'items':addItems       
+        }
+
+        $.ajax({  
+          url: APIURL + 'home/weacceptitems',  
+          type: 'POST',  
+          data : JSON.stringify(data),
+          contentType: 'application/json',
+          success: function(data) {  
+            itemsLoad();
+            $("#loader").hide(); 
+            //inputCheck(true); 
+            $("#add-item-input").val('');
+          }
+        });
+      });  
+
+      $("#item-list").on('click', 'button.row-edit-btn', function(){
+        $(this).hide();
+        $(this).closest('li').find('div input').prop('disabled', false);
+        $(this).closest('li').find('div button.row-update-btn').show();
+        $("#add-item-btn").hide();
+      }); 
+
+      $("#item-list").on('click', 'button.row-update-btn', function(){
+          var $that = this;
+          $("#loader").show();    
+          $($that).hide();
+          $($that).closest('li').find('div button.row-edit-btn').show();
+          var currentID = $($that).attr('id');
+          var currentData = $($that).closest('li').find('div input').val();
+          $($that).closest('li').find('div input').prop('disabled', true);
+          var data = {
+              'items':currentData       
+            }
+
+          $.ajax({  
+            url: APIURL + 'home/weacceptitems/'+currentID,  
+            type: 'PATCH',  
+            data : JSON.stringify(data),
+            contentType: 'application/json',
+            success: function(data) {          
+              itemsLoad()
+              $("#loader").hide();    
+              
+            },
+            error: function(error){
+              console.log(error)  
+            }  
+          });  
+      });
+
+      $("#item-list").on('click', 'button.row-delete-btn', function(){
+          var currentID = $(this).attr('id');
+          $("#loader").show();  
+          $.ajax({  
+            url: APIURL + 'home/weacceptitems/'+currentID,  
+            type: 'DELETE',         
+            success: function(data) {  
+              itemsLoad();
+              $("#loader").hide();                     
+            }
+          });
+      });
     
       $("#edit-btn").click(function(){
         $(this).hide();
@@ -198,24 +275,10 @@
         $("#edit-btn").prop('disabled', false);
         $("#submit-btn").show();
 
-        var arr = [];
-        
-        var header = $("#header").val();       
-        var item ="";
-        $("#item-list").each(function(){
-          item = $(this).find('li').text();      
-          var y = {}
-          if(item !=""){
-            y['images'] = item
-            arr.push(y)
-          }
-        });
-
+        var header = $("#header").val();              
         var data = {
           'visible':checkedVisibile,
-          'header': header, 
-          'content' : content, 
-          'images':arr,
+          'header': header
         }
 
         $.ajax({  

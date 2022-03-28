@@ -24,11 +24,15 @@ app.use(cors());
 app.use('/api/users', require('./routes/users/users'));
 app.use('/api/home/', require('./routes/home/banner'));
 app.use('/api/home/', require('./routes/home/first'));
+app.use('/api/home/', require('./routes/home/firstitems'));
 app.use('/api/home/', require('./routes/home/second'));
+app.use('/api/home/', require('./routes/home/seconditems'));
 app.use('/api/home/', require('./routes/home/fewreasons'));
 app.use('/api/home/', require('./routes/home/fewstep'));
 app.use('/api/home/', require('./routes/home/weaccept'));
+app.use('/api/home/', require('./routes/home/weacceptitems'));
 app.use('/api/home/', require('./routes/home/footer'));
+app.use('/api', require('./routes/login/login'));
 
 app.listen(8000, function(){
     console.log('Server Started');

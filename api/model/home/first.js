@@ -19,15 +19,7 @@ const firstSchema = new mongoose.Schema({
         min:6,
         max:1024
     },
-    image: {
-        type: String,
-        required: true,
-        min:6,
-        max:1024,
-    },
-    subitem: [{    
-        item:{ type: String, required: true }
-    }]
+    image:{ data:Buffer, contentType:String, fileName:String }    
 });
 
 module.exports = mongoose.model('firstDetails', firstSchema);

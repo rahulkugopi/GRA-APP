@@ -7,7 +7,7 @@ const verifyTokens = require('../verifyTokens/verifyTokens');
 
 
 // Creating one
-router.post('/register/', async (req,res) => {
+router.post('/register/', verifyTokens, async (req,res) => {
     
     // validate the data
     const { error } = userRegisterValidation(req.body)

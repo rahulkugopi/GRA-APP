@@ -172,10 +172,6 @@ ul.list-login-bottom li:nth-child(2) {
     float: right;
 }
 
-.field-group label {
-    font-size: 15px;
-}
-
 .check {
     margin: .5em 0;
 }
@@ -230,20 +226,7 @@ ul.list-login-bottom li:nth-child(2) {
     -webkit-transition: opacity 0.1s;
 }
 
-form .field-group {
-    background: #fff;
-    margin-bottom: 20px;
-    padding: 0px 10px 0px 0;
-    position: relative;
-}
 
-form .field-group span {
-    color: #999;
-    position: absolute;
-    left: 25px;
-    top: 18px;
-    opacity: .5;
-}
 
 ul.list-login {
     margin-top: 1.5em;
@@ -298,6 +281,8 @@ ul.links-unordered-list li a {
     font-family: 'Mukta', sans-serif;
     width: 100%;
     outline: none;
+    background: #fff;
+    margin: 0 0 10px 0;
 }
 
 ::-webkit-input-placeholder { /* Edge */
@@ -339,10 +324,13 @@ label.switch:hover {
 }
 .list-login li a{
     color:#fff;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
 }
 ul.list-login-bottom li a{
-    font-size: 13px;
-    letter-spacing: 2px;
+    font-size: 10px;
+    letter-spacing: 1px;
     font-weight: normal;
     text-transform: uppercase;
     color: #fff;
@@ -421,6 +409,13 @@ input:checked+.slider:before {
 .copyright p a:hover {
     color: #97ab4f;
 }
+
+.validation{
+    border:1px solid #dc3545!important;
+    box-shadow: -1px 2px 10px #ffd6da;
+    background: #fbdcdc!important;
+}
+
 /* -- Responsive code -- */
 @media screen and (max-width: 1280px) {
 }
@@ -469,9 +464,7 @@ input:checked+.slider:before {
         padding: 1em 1em;
         margin: 1em auto;
     }
-    form .field-group {
-        margin-bottom: 15px;
-    }
+    
     ul.list-login {
         margin-bottom: 0.5em;
     }

@@ -207,8 +207,7 @@
       $("#item-list").on('click', 'button.row-edit-btn', function(){
         $(this).hide();
         $(this).closest('li').find('div input').prop('disabled', false);
-        $(this).closest('li').find('div button.row-update-btn').show();
-        $("#add-item-btn").hide();
+        $(this).closest('li').find('div button.row-update-btn').show();        
       }); 
 
       $("#item-list").on('click', 'button.row-update-btn', function(){

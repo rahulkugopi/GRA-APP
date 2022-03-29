@@ -39,7 +39,7 @@ router.post('/first/', verifyTokens, upload.single('image'), async (req,res) => 
         content: req.body.content,
         image: {
             data:req.file.filename,
-            contentType:'image/png',
+            contentType:'image',
             fileName: date + '-' + originalName.toLowerCase()
         }     
     });
@@ -72,9 +72,8 @@ router.get('/first/:id', verifyTokens,  getFirst, (req,res) => {
 });
 
 // Updating one
-router.patch('/first/:id', verifyTokens, upload.single('image'), getFirst , async (req,res) => {
-   
-    const originalName = req.file.originalname.split(' ').join('');
+router.patch('/first/:id', verifyTokens,  getFirst , async (req,res) => {
+      
     if(req.body.visible != null){
         res.first.visible = req.body.visible;
     }
@@ -83,17 +82,26 @@ router.patch('/first/:id', verifyTokens, upload.single('image'), getFirst , asyn
     }
     if(req.body.content != null){
         res.first.content = req.body.content;
-    }   
-    //if(req.body.image != null){
-        res.first.image = {
-            data:req.file.filename,
-            contentType:'image/png',
-            fileName: date + '-' + originalName.toLowerCase()
-        }        
-    //}
+    }       
+                
+    try {
+       const updatedFirst = await res.first.save()
+       res.json(updatedFirst);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
 
-    console.log('res', res);
-    
+// Updating image
+router.patch('/firstbg/:id', verifyTokens, upload.single('image'), getFirst , async (req,res) => {
+  
+    const originalName = req.file.originalname.split(' ').join('');
+    res.first.image = {
+        data:req.file.filename,
+        contentType:'image',
+        fileName: date + '-' + originalName.toLowerCase()
+    } 
+   
     try {
        const updatedFirst = await res.first.save()
        res.json(updatedFirst);

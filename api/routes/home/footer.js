@@ -4,11 +4,10 @@ const footerDetails = require('../../model/home/footer');
 const verifyTokens = require('../verifyTokens/verifyTokens');
 
 // Creating one
-router.post('/footer/', async (req,res) => {
+router.post('/footer/', verifyTokens, async (req,res) => {
     
-    //create new banner
-    const footer = new footerDetails({
-        visible:req.body.visible,
+    //create new item
+    const footer = new footerDetails({        
         items: req.body.items
     });
    
@@ -41,11 +40,8 @@ router.get('/footer/:id',  getFooter , (req,res) => {
 });
 
 // Updating one
-router.patch('/footer/:id',  getFooter , async (req,res) => {
-
-     if(req.body.visible != null){
-        res.first.visible = req.body.visible;
-    }
+router.patch('/footer/:id', verifyTokens, getFooter , async (req,res) => {
+    
     if(req.body.items != null){
         res.footer.items = req.body.items;
     }    
@@ -59,7 +55,7 @@ router.patch('/footer/:id',  getFooter , async (req,res) => {
 });
 
 // Deleting one
-router.delete('/footer/:id',  getFooter, async (req,res) => {
+router.delete('/footer/:id', verifyTokens, getFooter, async (req,res) => {
     try {
         await res.footer.remove();
         res.json({ message: 'Deleted Users' });

@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const bannerDetails = require('../../model/home/banner');
-const userDetails = require('../../model/users/users');
 const verifyTokens = require('../verifyTokens/verifyTokens');
 const multer = require('multer');
 
@@ -30,7 +29,7 @@ const upload = multer({
 });
 
 // Creating one
-router.post('/banner/', upload.single('image'), async (req,res) => {
+router.post('/banner/', upload.single('image'), verifyTokens, async (req,res) => {
     
     //create new banner
     const originalName = req.file.originalname.split(' ').join('');
@@ -76,23 +75,30 @@ router.get('/banner/:id',   getBanner, (req,res) => {
 });
 
 // Updating one
-router.patch('/banner/:id',  getBanner , async (req,res) => {
+router.patch('/banner/:id', verifyTokens, upload.single('image'), getBanner , async (req,res) => {
    
+    const originalName = req.file.originalname.split(' ').join('');
     if(req.body.name != null){
         res.banner.name = req.body.name;
     }
     if(req.body.content != null){
         res.banner.content = req.body.content;
     }   
-    if(req.body.image != null){
-        res.banner.image = req.body.image;
-    }
+   
     if(req.body.buttonname != null){
         res.banner.buttonname = req.body.buttonname;
     }
     if(req.body.buttonurl != null){
         res.banner.buttonurl = req.body.buttonurl;
     }
+
+  //  if(req.body.image != null){
+        res.banner.image = {
+            data:req.file.filename,
+            contentType:'image/png',
+            fileName: date + '-' + originalName.toLowerCase()
+        }  
+   // }
 
     try {
        const updatedBanner = await res.banner.save()
@@ -103,7 +109,7 @@ router.patch('/banner/:id',  getBanner , async (req,res) => {
 });
 
 // Deleting one
-router.delete('/banner/:id',  getBanner, async (req,res) => {
+router.delete('/banner/:id', verifyTokens, getBanner, async (req,res) => {
     try {
         await res.banner.remove();
         res.json({ message: 'Deleted Users' });

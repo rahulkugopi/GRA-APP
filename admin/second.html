@@ -76,11 +76,7 @@
                   <td>
                     <label>Header</label>
                     <input type="text" class="form-control" id="header" disabled/>
-                  </td>
-                  <td>
-                    <label>Images</label>
-                    <input type="text" class="form-control" id="image" disabled/>
-                  </td>
+                  </td>                 
                 </tr>
                 <tr>
                   <td colspan="3">
@@ -134,28 +130,35 @@
   <script>
     $(document).ready(function(){
     
+      var accessToken = localStorage.getItem('accessToken'); 
+
       loadData();
       itemsLoad();
       $("#submit-btn").hide();
-      
+      var checkedVisibile = "";
+
       function loadData(){
         $.ajax({  
           url: APIURL + 'home/second',  
-          type: 'GET',  
+          type: 'GET',
+          beforeSend: function (xhr){ 
+              xhr.setRequestHeader('Authorization',accessToken); 
+          },  
           success: function(data) {  
             console.log(data);
              $.each(data,function(index,res){
                 $("#loader").hide();
                 $("#item-list").html('');
                 $("#header").val(res.header);
-                $("#image").val(res.image);
                 $("#content").val(res.content);
                 $("#submit-btn").attr('data-id',res._id);
                 if(res.visible == "true"){
                   $("#visible").prop('checked' , true);
+                  checkedVisibile = 'true';
                 }
                 else{
                   $("#visible").prop('checked' , false);
+                  checkedVisibile = 'false';
                 }                             
     
              })
@@ -169,12 +172,15 @@
       function itemsLoad(){
         $.ajax({  
           url: APIURL + 'home/seconditems',  
-          type: 'GET',  
+          type: 'GET', 
+          beforeSend: function (xhr){ 
+              xhr.setRequestHeader('Authorization',accessToken); 
+          }, 
           success: function(data) {  
             $("#item-list").html('');
             var itemList = "";
             $.each(data,function(index,val){
-              itemList +="<li id="+ val._id +"><div class='row'><div class='col-sm-9'><input class='additem form-control' value="+ val.items +" disabled></div> <div class='col-sm-3'><button type='button' class='btn-2 row-edit-btn' id="+ val._id +" >Edit</button> <button type='button' class='btn-2 row-update-btn' id="+ val._id +" style='display:none;'>Update</button> <button type='button' class='btn-1 row-delete-btn'  id="+ val._id +" >Delete</button></div></div></li>"                       
+              itemList +="<li id="+ val._id +"><div class='row'><div class='col-sm-9'><textarea class='additem form-control' disabled style='height: 40px;'>"+ val.items +"</textarea></div> <div class='col-sm-3'><button type='button' class='btn-2 row-edit-btn' id="+ val._id +" >Edit</button> <button type='button' class='btn-2 row-update-btn' id="+ val._id +" style='display:none;'>Update</button> <button type='button' class='btn-1 row-delete-btn'  id="+ val._id +" >Delete</button></div></div></li>"                       
             });  
             $("#item-list").append(itemList);
           }
@@ -196,12 +202,14 @@
         $.ajax({  
           url: APIURL + 'home/seconditems',  
           type: 'POST',  
+          beforeSend: function (xhr){ 
+              xhr.setRequestHeader('Authorization',accessToken); 
+          },
           data : JSON.stringify(data),
           contentType: 'application/json',
           success: function(data) {  
             itemsLoad();
             $("#loader").hide(); 
-            //inputCheck(true); 
             $("#add-item-input").val('');
           }
         });
@@ -209,9 +217,8 @@
     
       $("#item-list").on('click', 'button.row-edit-btn', function(){
         $(this).hide();
-        $(this).closest('li').find('div input').prop('disabled', false);
-        $(this).closest('li').find('div button.row-update-btn').show();
-        $("#add-item-btn").hide();
+        $(this).closest('li').find('div textarea').prop('disabled', false);
+        $(this).closest('li').find('div button.row-update-btn').show();        
       }); 
 
       $("#item-list").on('click', 'button.row-update-btn', function(){
@@ -220,21 +227,24 @@
           $($that).hide();
           $($that).closest('li').find('div button.row-edit-btn').show();
           var currentID = $($that).attr('id');
-          var currentData = $($that).closest('li').find('div input').val();
+          var currentData = $($that).closest('li').find('div textarea').val();
           $($that).closest('li').find('div input').prop('disabled', true);
+
           var data = {
               'items':currentData       
-            }
+          }
 
           $.ajax({  
             url: APIURL + 'home/seconditems/'+currentID,  
             type: 'PATCH',  
+            beforeSend: function (xhr){ 
+                xhr.setRequestHeader('Authorization',accessToken); 
+            },
             data : JSON.stringify(data),
             contentType: 'application/json',
             success: function(data) {          
-              itemsLoad()
-              $("#loader").hide();    
-              
+              itemsLoad();
+              $("#loader").hide();                  
             },
             error: function(error){
               console.log(error)  
@@ -247,7 +257,10 @@
           $("#loader").show();  
           $.ajax({  
             url: APIURL + 'home/seconditems/'+currentID,  
-            type: 'DELETE',         
+            type: 'DELETE',
+            beforeSend: function (xhr){ 
+                xhr.setRequestHeader('Authorization',accessToken); 
+            },         
             success: function(data) {  
               itemsLoad();
               $("#loader").hide();                     
@@ -265,9 +278,7 @@
         inputCheck(true);
         $("#submit-btn").hide();
         $("#edit-btn").show();
-      });
-
-      var checkedVisibile = "";
+      });      
 
       $("#visible").change(function(){
         if($(this).prop('checked') == true){
@@ -284,39 +295,28 @@
         $(this).hide();
         inputCheck(true);
         $("#edit-btn").prop('disabled', false);
-        $("#submit-btn").show();
-    
-        var arr = [];
+        $("#submit-btn").show();        
         
         var header = $("#header").val();
-        var image = $("#image").val();
-        var content = $("#content").val();
-        var item ="";
-
-        $("#item-list li").each(function(){
-          item = $(this).find('span.additem').text();      
-          var y = {}
-          if(item !=""){
-            y['item'] = item
-            arr.push(y)
-          }
-        });
+        var content = $("#content").val();        
     
         var data = {
           'visible':checkedVisibile,
           'header': header, 
-          'content' : content, 
-          'image':image,
-          'subitem':arr
+          'content' : content
         }
     
         $.ajax({  
           url: APIURL + 'home/second/'+currentID,  
           type: 'PATCH',  
+          beforeSend: function (xhr){ 
+              xhr.setRequestHeader('Authorization',accessToken); 
+          },
           data : JSON.stringify(data),
           contentType: 'application/json',
           success: function(data) {          
-            loadData()
+            loadData();
+            itemsLoad();
             $("#loader").hide();   
             $("#edit-btn").show();
             $("#submit-btn").hide();

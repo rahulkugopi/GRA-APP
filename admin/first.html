@@ -13,6 +13,7 @@
 <body>
   <div class="loading-section" id="loader">
     <div class="loader"></div>
+    <div class="clearfix"></div>
   </div>
   <header>
     <nav class="navbar navbar-expand-lg container">
@@ -81,16 +82,15 @@
                     <td>
                       <label>Images</label>
                       <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-9">
                           <input type="text" class="form-control" id="image" disabled/>
-                          <div class="btn-section">
-                            <button type='button' class='btn-2 btn-small' id="delete-img" disabled style="display: none;">Delete</button>
-                            <label for="add-image" class='btn-2 btn-small' id="add-image-label">Add Image</label>                                                       
-                              <input type="file" id="add-image" class="file-hidden" name="image" />                                                                                                                                             
+                          <div class="btn-section">                            
+                            <label for="add-image" class='btn-2 btn-small' id="add-image-label">Image Change</label>                                                       
+                            <input type="file" id="add-image" class="file-hidden" name="image" />                                                                                                                                             
                           </div>                        
                         </div>
-                        <div class="col-md-6">
-                          <img src="" id="img-view" width="300"/>
+                        <div class="col-md-3">
+                          <img src="" id="img-view" width="150" style="margin: -7px 0 0 0;"/>
                         </div>
                       </div>                    
                     </td>
@@ -197,7 +197,7 @@ $(document).ready(function(){
     var data = new FormData();
     data.append('image', imageFiles);
     $.ajax({  
-      url: APIURL + 'home/first/'+currentID,  
+      url: APIURL + 'home/firstbg/'+currentID,  
       type: 'PATCH',  
       beforeSend: function (xhr){ 
         xhr.setRequestHeader('Authorization',accessToken); 
@@ -225,7 +225,7 @@ $(document).ready(function(){
         $("#item-list").html('');
         var itemList = "";
         $.each(data,function(index,val){
-          itemList +="<li id="+ val._id +"><div class='row'><div class='col-sm-9'><input class='additem form-control' value="+ val.items +" disabled></div> <div class='col-sm-3'><button type='button' class='btn-2 row-edit-btn' id="+ val._id +" >Edit</button> <button type='button' class='btn-2 row-update-btn' id="+ val._id +" style='display:none;'>Update</button> <button type='button' class='btn-1 row-delete-btn'  id="+ val._id +" >Delete</button></div></div></li>"                       
+          itemList +="<li id="+ val._id +"><div class='row'><div class='col-sm-9'><textarea class='additem form-control' disabled style='height: 40px;'>"+ val.items +"</textarea></div> <div class='col-sm-3'><button type='button' class='btn-2 row-edit-btn' id="+ val._id +" >Edit</button> <button type='button' class='btn-2 row-update-btn' id="+ val._id +" style='display:none;'>Update</button> <button type='button' class='btn-1 row-delete-btn'  id="+ val._id +" >Delete</button></div></div></li>"                       
         });  
         $("#item-list").append(itemList);
       },
@@ -240,6 +240,7 @@ $(document).ready(function(){
       var addItems = $("#add-item-input").val();
       if(addItems == ""){
         $("#add-item-input").addClass('validation');
+        $("#loader").hide(); 
         return;
       }     
 
@@ -257,8 +258,7 @@ $(document).ready(function(){
         contentType: 'application/json',
         success: function(data) {  
           itemsLoad();
-          $("#loader").hide(); 
-          //inputCheck(true); 
+          $("#loader").hide();           
           $("#add-item-input").val('');
         },
         error: function(error){
@@ -269,9 +269,8 @@ $(document).ready(function(){
 
   $("#item-list").on('click', 'button.row-edit-btn', function(){
     $(this).hide();
-    $(this).closest('li').find('div input').prop('disabled', false);
+    $(this).closest('li').find('div textarea').prop('disabled', false);
     $(this).closest('li').find('div button.row-update-btn').show();
-    $("#add-item-btn").hide();
   });  
 
   $("#item-list").on('click', 'button.row-update-btn', function(){
@@ -280,7 +279,7 @@ $(document).ready(function(){
     $($that).hide();
     $($that).closest('li').find('div button.row-edit-btn').show();
     var currentID = $($that).attr('id');
-    var currentData = $($that).closest('li').find('div input').val();
+    var currentData = $($that).closest('li').find('div textarea').val();
     $($that).closest('li').find('div input').prop('disabled', true);
     var data = {
         'items':currentData       
@@ -325,8 +324,7 @@ $(document).ready(function(){
   $("#edit-btn").click(function(){
     $(this).hide();
     inputCheck(false);
-    $("#submit-btn").show();
-    $("#delete-img").show();    
+    $("#submit-btn").show();    
     $(".row-edit-btn").show();
     $(".row-delete-btn").show();
   });
@@ -334,17 +332,11 @@ $(document).ready(function(){
   $("#cancel-btn").click(function(){
     inputCheck(true);
     $("#submit-btn").hide();
-    $("#edit-btn").show().prop('disabled', false);
-    $("#delete-img").hide();  
+    $("#edit-btn").show().prop('disabled', false); 
     $(".row-edit-btn").hide();
     $(".row-delete-btn").hide();
   });
-
-  $("#delete-img").click(function(){
-    $(this).hide();
-    $("#add-image-label").show();
-  });
-
+  
   $("#visible").change(function(){
     if($(this).prop('checked') == true){
       checkedVisibile = true;

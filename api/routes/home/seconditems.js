@@ -4,7 +4,7 @@ const secondItemsDetails = require('../../model/home/seconditems');
 const verifyTokens = require('../verifyTokens/verifyTokens');
 
 // Creating one
-router.post('/seconditems/', async (req,res) => {
+router.post('/seconditems/', verifyTokens, async (req,res) => {
 
     const secondtitems = new secondItemsDetails({
         items:req.body.items      
@@ -39,14 +39,14 @@ router.get('/seconditems/:id',   getSecondItems, (req,res) => {
 });
 
 // Updating one
-router.patch('/seconditems/:id',  getSecondItems , async (req,res) => {
+router.patch('/seconditems/:id', verifyTokens, getSecondItems , async (req,res) => {
     
     if(req.body.items != null){
         res.seconditems.items = req.body.items;
     }    
 
     try {
-       const updatedSecondItems = await res.seconditems.save()
+       const updatedSecondItems = await res.seconditems.save();
        res.json(updatedSecondItems);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -54,9 +54,9 @@ router.patch('/seconditems/:id',  getSecondItems , async (req,res) => {
 });
 
 // Deleting one
-router.delete('/seconditems/:id',  getSecondItems, async (req,res) => {
+router.delete('/seconditems/:id', verifyTokens, getSecondItems, async (req,res) => {
     try {
-        await res.fseconditems.remove();
+        await res.seconditems.remove();
         res.json({ message: 'Deleted Users' });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -64,16 +64,16 @@ router.delete('/seconditems/:id',  getSecondItems, async (req,res) => {
 });
 
 async function getSecondItems(req, res, next){
-    let fseconditems
+    let seconditems
     try {
-        fseconditems = await secondItemsDetails.findById(req.params.id)
-        if(fseconditems == null){
+        seconditems = await secondItemsDetails.findById(req.params.id)
+        if(seconditems == null){
             return res.status(404).json({ message: 'Cannot find subscriber' })
         }
     } catch (error) {
         return res.status(500).json({ message: error.message })
     }
-    res.fseconditems = fseconditems
+    res.seconditems = seconditems
     next();
 }
 

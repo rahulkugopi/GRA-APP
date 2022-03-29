@@ -4,14 +4,12 @@ const secondDetails = require('../../model/home/second');
 const verifyTokens = require('../verifyTokens/verifyTokens');
 
 // Creating one
-router.post('/second/', async (req,res) => {
+router.post('/second/', verifyTokens, async (req,res) => {
     
     const second = new secondDetails({
         visible:req.body.visible,
         header: req.body.header,
-        content: req.body.content,
-        image: req.body.image,
-        subitem: req.body.subitem
+        content: req.body.content        
     });
    
     try {
@@ -43,7 +41,7 @@ router.get('/second/:id',  getSecond , (req,res) => {
 });
 
 // Updating one
-router.patch('/second/:id',  getSecond , async (req,res) => {
+router.patch('/second/:id',  verifyTokens, getSecond , async (req,res) => {
 
     if(req.body.visible != null){
         res.second.visible = req.body.visible;
@@ -53,13 +51,7 @@ router.patch('/second/:id',  getSecond , async (req,res) => {
     }
     if(req.body.content != null){
         res.second.content = req.body.content;
-    }    
-    if(req.body.image != null){
-        res.second.image = req.body.image;
-    }
-    if(req.body.subItem != null){
-        res.second.subItem = req.body.subItem;
-    }
+    }   
 
     try {
        const updatedSecond = await res.second.save()
@@ -70,7 +62,7 @@ router.patch('/second/:id',  getSecond , async (req,res) => {
 });
 
 // Deleting one
-router.delete('/second/:id',  getSecond, async (req,res) => {
+router.delete('/second/:id', verifyTokens, getSecond, async (req,res) => {
     try {
         await res.second.remove();
         res.json({ message: 'Deleted Users' });

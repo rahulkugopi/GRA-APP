@@ -92,11 +92,11 @@
                     </td>
                     <td>
                       <label>Button Name</label>
-                      <input type="text" class="form-control" id="buttonname"  disabled />
+                      <input type="text" class="form-control" id="buttonname" name="buttonname" disabled />
                     </td>
                     <td>
                       <label>Button URL</label>
-                      <input type="text" class="form-control" id="buttonurl" disabled />
+                      <input type="text" class="form-control" id="buttonurl" name="buttonurl" disabled />
                     </td>
                   </tr>                          
                   <tr>
@@ -128,11 +128,11 @@
   <script src="assets/js/SITEURL.js"></script>
   <script src="assets/js/loginconfig.js"></script>
 
-
-
   <script>
     $(document).ready(function(){
     
+      var accessToken = localStorage.getItem('accessToken');    
+
       loadData();
       $("#submit-btn").hide();
       $("#nodatafound").hide();
@@ -171,22 +171,28 @@
                 itemList +="<div style='margin:0 0 20px 0;' class='few-inner-grid'><h1>Banner "+ rowCount +"</h1><table class='table table-bordered'>"
                 itemList +="<tbody>"
                 itemList +="<tr>"
-                itemList +="<td width='40%'><label>Header</label><input type='text' class='form-control' value="+ res.name +" disabled /></td>"
+                itemList +="<td width='40%'><label>Header</label><input type='text' class='form-control "+ res._id +"' id='header"+ res._id +"' value="+ res.name +" disabled /></td>"
                 itemList +="<td><div class='row'><div class='col-sm-8'><label>Image</label><input type='text' class='form-control' value="+ ImageFilePath + 'banner/' +res.image.fileName +" disabled />"
-                itemList +="<button type='button' class='btn-2 image-change' id="+ res._id +" style='margin:10px 0 0 0;'>Image Change</button></div>"
-                itemList +="<div class='col-sm-3'><img src="+ ImageFilePath + 'banner/' +res.image.fileName +" /></div>"
+                itemList +="<label for='img"+ res._id +"' class='btn-2' id="+ res._id +" style='margin:10px 0 0 0;'>Image Change</label><input type='file' class='file-hidden change-image' data-id="+ res._id +" id='img"+ res._id +"' name='image' /></div>"
+                itemList +="<div class='col-sm-3'><img src="+ ImageFilePath + 'banner/' +res.image.fileName +" style='margin: 10px 0 0 0px;'/></div>"
                 itemList +="</td>"
                 itemList +="</tr>"
                 itemList +="<tr>"
-                itemList +="<td colspan='2'><label>Content</label><textarea class='form-control' disabled>"+ res.content +"</textarea></td>"                 
+                itemList +="<td colspan='2'><label>Content</label><textarea class='form-control "+ res._id +"' id='content"+ res._id +"' disabled>"+ res.content +"</textarea></td>"                 
                 itemList +="</tr>"
                 itemList +="<tr>"
-                itemList +="<td><label>Button Name</label><input type='text' class='form-control' value="+ res.buttonname +" disabled /></td>"
-                itemList +="<td><label>Button URL</label><input type='text' class='form-control' value="+ res.buttonurl +" disabled /></td>"
+                  if(typeof res.buttonname != "undefined" || typeof res.buttonurl != "undefined"){
+                    itemList +="<td><label>Button Name</label><input type='text' class='form-control "+ res._id +"' id='buttonname"+ res._id +"' value="+ res.buttonname +" disabled /></td>"
+                    itemList +="<td><label>Button URL</label><input type='text' class='form-control "+ res._id +"'  id='buttonurl"+ res._id +"' value="+ res.buttonurl +" disabled /></td>"
+                  } 
+                  else{
+                    itemList +="<td><label>Button Name</label><input type='text' class='form-control "+ res._id +"' id='buttonname"+ res._id +"'  disabled /></td>"
+                    itemList +="<td><label>Button URL</label><input type='text' class='form-control "+ res._id +"'  id='buttonurl"+ res._id +"'  disabled /></td>"
+                  }               
                 itemList +="</tr>"
-                itemList +="<td colspan='2'><button type='button' class='btn-2 row-edit-btn'>Edit</button>&nbsp;"
-                itemList +="<button type='button' class='btn-2 row-update-btn' style='display:none;'>Update</button>&nbsp;"
-                itemList +="<button type='button' class='btn-1'>Delete</button></td>"
+                itemList +="<td colspan='2'><button type='button' class='btn-2 row-edit-btn' id="+ res._id +">Edit</button>&nbsp;"
+                itemList +="<button type='button' class='btn-2 row-update-btn' id="+ res._id +" style='display:none;'>Update</button>&nbsp;"
+                itemList +="<button type='button' class='btn-1 row-delete-btn' id="+ res._id +">Delete</button></td>"
                 itemList +="</tbody>"
                 itemList +="</table></div>"                       
               });
@@ -207,7 +213,7 @@
         }
       });
 
-      var buttonactiveCheck = "";
+      var buttonactiveCheck = "false";
 
       $("#buttonactive").change(function(){
         if($(this).prop('checked') == true){
@@ -238,46 +244,139 @@
         var buttonname = $("#buttonname").val();
         var buttonurl = $("#buttonurl").val();       
 
-        if(buttonname == ""){
-          buttonname = ""
-        }
-        if(buttonurl == ""){
-          buttonurl = ""
-        }
 
+        if(header == ""){
+          $("#header").addClass('validation');
+          $("#loader").hide();      
+          return;
+        }
+        
+        if($("#image").val() == ""){
+          $("#image").addClass('validation');
+          $("#loader").hide();      
+          return;
+        }     
+        
+        if(content == ""){
+          $("#content").addClass('validation');
+          $("#loader").hide();      
+          return;
+        }   
+        
         var data = new FormData();
         data.append('name', header);
         data.append('image', image);
         data.append('content', content);        
         data.append('buttonactive', buttonactiveCheck);
-        data.append('buttonname', buttonname);
-        data.append('buttonurl', buttonurl);
         
+        if(buttonactiveCheck == "true"){
+          data.append('buttonname', buttonname);
+          data.append('buttonurl', buttonurl);
+        }
+              
         $.ajax({  
           url: APIURL + 'home/banner',  
-          type: 'POST',           
+          type: 'POST',  
+          beforeSend: function (xhr){ 
+            xhr.setRequestHeader('Authorization',accessToken); 
+          },         
           data : data,
           contentType: false,
           processData: false,
           success: function(data) {  
             $("#loader").hide();   
-            //loadData();   
+            loadData();   
           },
           error: function(error){
             console.log(error)  
           } 
         }); 
       });
+      
+      $("#inner-grid-details").on('change', 'input.change-image', function(){
+        $("#loader").show();  
+        var currentID = $(this).attr('data-id');     
+        var imageFiles = $(this)[0].files[0];
+        var data = new FormData();
+        data.append('image', imageFiles);
+        $.ajax({  
+          url: APIURL + 'home/banner/'+currentID,  
+          type: 'PATCH',  
+          beforeSend: function (xhr){ 
+            xhr.setRequestHeader('Authorization',accessToken); 
+          },
+          data : data,
+          contentType: false,
+          processData: false,
+          success: function(data) {  
+            $("#loader").hide();  
+            loadData();    
+          },
+          error: function(error){
+            console.log(error)  
+          } 
+        }); 
+      });  
 
       $("#inner-grid-details").on('click', 'button.row-edit-btn', function(){
+        var currentID = $(this).attr('id');        
         $(this).hide();
-        $(this).parent('tr').find('input').prop('disabled', false);
+        $('.'+ currentID +'').prop('disabled', false);
         $(this).closest('tr').find('td button.row-update-btn').show();
-        $("#add-item-btn").hide();
       }); 
 
-     // image-change
+      $("#inner-grid-details").on('click', 'button.row-update-btn', function(){
+        var currentID = $(this).attr('id');        
+        $(this).hide();
+        $('.'+ currentID +'').prop('disabled', true);
+        $(this).closest('tr').find('td button.row-edit-btn').show();
 
+        var header = $('#header'+ currentID +'').val();
+        var content = $('#content'+ currentID +'').val();
+        var buttonname = $('#buttonname'+ currentID +'').val();
+        var header = $('#buttonurl'+ currentID +'').val();
+
+        var data = {
+          'name':header,
+          'content':content,      
+          'buttonname':buttonname,
+          'buttonurl':header   
+        }
+
+        $.ajax({  
+          url: APIURL + 'home/banner/'+currentID,  
+          type: 'PATCH',       
+          beforeSend: function (xhr){ 
+            xhr.setRequestHeader('Authorization',accessToken); 
+          },     
+          data : JSON.stringify(data),
+          contentType: 'application/json',
+          success: function(data) {  
+            loadData();
+            $("#loader").hide(); 
+          },    
+          error: function(error){
+            console.log(error)  
+          }  
+        });
+
+      }); 
+
+      $("#inner-grid-details").on('click', 'button.row-delete-btn', function(){
+        var currentID = $(this).attr('id');
+        $("#loader").show();  
+        $.ajax({  
+          url: APIURL + 'home/banner/'+currentID,  
+          type: 'DELETE', 
+          beforeSend: function (xhr){ 
+            xhr.setRequestHeader('Authorization',accessToken); 
+          },                 
+          success: function(data) {  
+            loadData();
+            $("#loader").hide();                     
+          }
+        });
+    });
     
       $("#cancel-btn").click(function(){
         inputCheck(true);
@@ -290,6 +389,10 @@
         $("input , button, textarea").prop('disabled',evt);
         $("input textarea").val('');
       }
+
+      $('input').keyup(function(){
+        $(this).removeClass('validation');
+      });
     
     });
     </script>   

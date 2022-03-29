@@ -67,51 +67,35 @@
         <div class="row">
           <div class="col-md-12">
             <table class="table table-bordered">              
-              <tbody>   
+              <tbody>                             
                 <tr>
                   <td>
-                    <label>Visiblity</label>
-                    <input type="checkbox" class="form-control" id="visible" disabled/>
-                  </td>                                  
-                </tr>             
-                <tr>
-                  <td>
-                    <label>Content 1</label>
-                    <textarea class="form-control" id="content1"></textarea>
+                    <label>Item</label>
+                    <textarea class="form-control" id="item" style="height:50px;"></textarea>
                   </td>
-                </tr> 
-                <tr>
-                  <td>
-                    <label>Content 2</label>
-                    <textarea class="form-control" id="content2"></textarea>
-                  </td>
-                </tr> 
-                <tr>
-                  <td>
-                    <label>Content 3</label>
-                    <textarea class="form-control" id="content3"></textarea>
-                  </td>
-                </tr>                  
-                <tr>
-                  <td>
-                    <label>Content 4</label>
-                    <textarea class="form-control" id="content4"></textarea>
-                  </td>
-                </tr>
+                </tr>                               
                 <tr>
                   <td colspan="2">
-                    <button type="button" class="btn-2" id="submit-btn">Submit</button>
-                    <button type="button" class="btn-2" id="edit-btn">Edit</button>
+                    <button type="button" class="btn-2" id="add-item-btn">Add Item</button>                    
                     <button type="button" class="btn-1" id="cancel-btn">Cancel</button>
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
-        </div>
-
-       
-
+          <div class="col-sm-12" style="margin:15px 0 0 0;">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th width="10%">#</th>
+                  <th>Content</th>
+                  <th width="25%"></th>
+                </tr>
+              </thead>
+              <tbody id="footer-items"></tbody>
+            </table>
+          </div>
+        </div>      
       </div>
       </div>
     </div>    
@@ -131,6 +115,8 @@
   <script>
     $(document).ready(function(){
     
+      var accessToken = localStorage.getItem('accessToken');  
+
       loadData();
       $("#submit-btn").hide();
     
@@ -143,10 +129,19 @@
                 $("#edit-btn").prop('disabled' , false);
                 $("#loader").hide();
                
-                $("#content1").val(res.content1);
-                $("#content2").val(res.content2);
-                $("#content3").val(res.content3);
-                $("#content4").val(res.content4);
+                
+                $("#footer-items").html('');
+                var itemList = "";
+                $.each(data,function(index,val){
+                  var rowCount = index+1;
+                  itemList +="<tr>";
+                  itemList +="<td>"+ rowCount +"</td>";
+                  itemList +="<td><input type='text' class='form-control' value='"+ val.items +"' disabled/></td>";
+                  itemList +="<td align='center'><button type='button' class='btn-2 row-update-btn' id='"+ val._id +"' style='display:none;'>Update</button> <button type='button' class='btn-2 row-edit-btn'>Edit</button> <button type='button' class='btn-1 row-delete-btn' id='"+ val._id +"'>Delete</button></td>";
+                  itemList +="<tr>";
+                });  
+                $("#footer-items").append(itemList);
+               
                 $("#submit-btn").attr('data-id',res._id);
                 if(res.visible == "true"){
                   $("#visible").prop('checked' , true);
@@ -162,23 +157,108 @@
           }  
         });  
       }
-    
-      $("#edit-btn").click(function(){
-        $(this).hide();
-        inputCheck(false);
-        $("#submit-btn").show();
+
+      $("#add-item-btn").click(function(){
+        $("#loader").show(); 
+        var Item = $("#item").val();
+
+        if(Item == ""){
+          $("#item").addClass('validation');
+          $("#loader").hide(); 
+          return;
+        }     
+
+        var data = {
+          'items':Item       
+        }
+
+        $.ajax({  
+          url: APIURL + 'home/footer',  
+          type: 'POST',
+          beforeSend: function (xhr){ 
+              xhr.setRequestHeader('Authorization',accessToken); 
+          },  
+          data : JSON.stringify(data),
+          contentType: 'application/json',
+          success: function(data) {  
+            loadData();
+            $("#loader").hide();           
+            $("#item").val('');
+          },
+          error: function(error){
+            console.log(error)  
+          }  
+        });
       });
+
+
+      $("#footer-items").on('click', 'button.row-edit-btn', function(){
+        $(this).hide();
+        $(this).closest('tr').find('td:nth-child(2) input').prop('disabled', false);
+        $(this).closest('tr').find('td:nth-child(3) button.row-update-btn').show();
+      });
+
+      $("#footer-items").on('click', 'button.row-update-btn', function(){
+        var $that = this;
+        $("#loader").show();    
+        $($that).hide();
+        $($that).closest('tr').find('td:nth-child(3) .row-edit-btn').show();
+        var currentID = $($that).attr('id');
+        var currentData = $($that).closest('tr').find('td:nth-child(2) input').val();
+        $($that).closest('tr').find('td:nth-child(2) input').prop('disabled', true);
+        
+        var data = {
+            'items':currentData       
+        }
+
+        $.ajax({  
+          url: APIURL + 'home/footer/'+currentID,  
+          type: 'PATCH',  
+          beforeSend: function (xhr){ 
+              xhr.setRequestHeader('Authorization',accessToken); 
+          },
+          data : JSON.stringify(data),
+          contentType: 'application/json',
+          success: function(data) {          
+            loadData()
+            $("#loader").hide();    
+            
+          },
+          error: function(error){
+            console.log(error)  
+          }  
+        });  
+      }); 
+
+      $("#footer-items").on('click', 'button.row-delete-btn', function(){
+        var currentID = $(this).attr('id');
+        $("#loader").show();  
+        $.ajax({  
+          url: APIURL + 'home/footer/'+currentID,  
+          type: 'DELETE',  
+          beforeSend: function (xhr){ 
+              xhr.setRequestHeader('Authorization',accessToken); 
+          },       
+          success: function(data) {  
+            loadData();
+            $("#loader").hide();                     
+          }
+        });
+      });
+     
     
       $("#cancel-btn").click(function(){
-        inputCheck(true);
         loadData();
-        $("#submit-btn").hide();
-        $("#edit-btn").show();
+        $("#item").val('');
       });
     
       function inputCheck(evt){
         $("input , button, textarea").prop('disabled',evt);
       }
+
+      $('textarea').keyup(function(){
+        $(this).removeClass('validation');
+      });
     
     });
   </script> 

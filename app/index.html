@@ -528,24 +528,17 @@
         $.ajax({  
           url: APIURL + 'home/footer',  
           type: 'GET',  
-          success: function(data) {            
-            $.each(data,function(index,res){
-              if(res.visible == "true"){
-                $("#footer").show();
-              }
-              else{
-                $("#footer").hide();
-              }              
-             
-              $("#footer-content").html('');
-              var itemList = "";
-              $.each(res.items,function(index,val){            
-                itemList +="<p>"+ val.item +"</p>"                                            
-              });  
-              itemList +="</div>"
-              $("#footer-content").append(itemList);              
-              
+          success: function(data) {  
+            
+            $("#footer-content").html('');
+            var itemList = "";          
+            $.each(data,function(index,res){                                     
+                itemList +="<p>"+ res.items +"</p>"                                                                                
             });
+              
+            itemList +="</div>"
+            $("#footer-content").append(itemList);   
+                
           }
         });
       }

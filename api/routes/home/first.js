@@ -89,8 +89,7 @@ router.patch('/first/:id', verifyTokens, upload.single('image'), getFirst , asyn
             data:req.file.filename,
             contentType:'image/png',
             fileName: date + '-' + originalName.toLowerCase()
-        }
-        
+        }        
     //}
 
     console.log('res', res);

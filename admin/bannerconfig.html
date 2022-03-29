@@ -56,6 +56,7 @@
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+              <li class="breadcrumb-item"><a href="home.html">Home</a></li>
               <li class="breadcrumb-item active" aria-current="page">Banner</li>
             </ol>
           </nav>
@@ -65,29 +66,54 @@
       <div class="inner-grd" id="inner-id">       
         <div class="row">
           <div class="col-md-12">
-            <table class="table table-bordered">              
-              <tbody>
-                <tr>
-                  <td>
-                    <label>Visiblity</label>
-                    <input type="checkbox" class="form-control" id="visible" disabled/>
-                  </td>                                    
-                </tr>
-                <tr>
-                  <td>                    
-                    <div id="inner-grid-details"></div>                    
-                  </td>
-                </tr>              
-                <tr>
-                  <td>
-                    <button type="button" class="btn-2" id="submit-btn">Submit</button>
-                    <button type="button" class="btn-2" id="edit-btn">Edit</button>
-                    <button type="button" class="btn-1" id="cancel-btn">Cancel</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <form enctype="multipart/form-data">
+              <table class="table table-bordered">              
+                <tbody>
+                  <tr>                   
+                    <td colspan="2">
+                      <label>Header</label>
+                      <input type="text" class="form-control" id="header" name="name" disabled/>
+                    </td> 
+                    <td>
+                      <label>Image</label>
+                      <input type="file" class="form-control" id="image" name="image" disabled style="padding: 3px;"/>
+                    </td>                                                    
+                  </tr>
+                  <tr>
+                    <td colspan="3">
+                      <label>Content</label>
+                      <textarea class="form-control" id="content" name="content" disabled></textarea>
+                    </td> 
+                  </tr>   
+                  <tr>
+                    <td>
+                      <label>Button Active</label>
+                      <input type="checkbox" class="form-control" id="buttonactive" name="buttonactive" disabled/>
+                    </td>
+                    <td>
+                      <label>Button Name</label>
+                      <input type="text" class="form-control" id="buttonname"  disabled />
+                    </td>
+                    <td>
+                      <label>Button URL</label>
+                      <input type="text" class="form-control" id="buttonurl" disabled />
+                    </td>
+                  </tr>                          
+                  <tr>
+                    <td>
+                      <button type="button" class="btn-2" id="submit-btn">Submit</button>
+                      <button type="button" class="btn-2" id="edit-btn">Edit</button>
+                      <button type="button" class="btn-1" id="cancel-btn">Cancel</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table> 
+            </form>             
           </div>
+          <div class="col-md-12" id="inner-grid-details" style="margin:35px 0 0 0;"></div>   
+          <div class="col-md-12" id="nodatafound" style="margin: 35px 0 0 0;background: #e7e7e7;text-align: center;padding: 10px;">
+            <p style="margin:0px;">No data found!</p>
+          </div>        
         </div>  
       </div>
     </div>    
@@ -109,13 +135,22 @@
     
       loadData();
       $("#submit-btn").hide();
-    
+      $("#nodatafound").hide();
+      var checkedVisibile = "false";
+
       function loadData(){
         $.ajax({  
           url: APIURL + 'home/banner',  
           type: 'GET',  
           success: function(data) {   
-              
+              if(data.length == "0"){
+                $("#loader").hide();
+                $("#nodatafound").show();
+              }
+              else{
+                $("#nodatafound").hide();
+              }
+
               $("#inner-grid-details").html('');
               var itemList = "";
               $.each(data,function(index,res){
@@ -125,21 +160,33 @@
                 $("#submit-btn").attr('data-id',res._id);
                 if(res.visible == "true"){
                   $("#visible").prop('checked' , true);
+                  checkedVisibile = "true";
                 }
                 else{
                   $("#visible").prop('checked' , false);
+                  checkedVisibile = "false";
                 }
                 var rowCount = index+1
                 
-                itemList +="<div style='margin:0 0 20px 0;' class='col-sm-12 few-inner-grid'><h1>Banner "+ rowCount +"</h1><table class='table'>"
+                itemList +="<div style='margin:0 0 20px 0;' class='few-inner-grid'><h1>Banner "+ rowCount +"</h1><table class='table table-bordered'>"
                 itemList +="<tbody>"
                 itemList +="<tr>"
-                itemList +="<td><input type='text' class='form-control' value="+ res.name +" disabled /></td>"
-                itemList +="<td><input type='text' class='form-control' value="+ res.image +" disabled /></td>"
+                itemList +="<td width='40%'><label>Header</label><input type='text' class='form-control' value="+ res.name +" disabled /></td>"
+                itemList +="<td><div class='row'><div class='col-sm-8'><label>Image</label><input type='text' class='form-control' value="+ ImageFilePath + 'banner/' +res.image.fileName +" disabled />"
+                itemList +="<button type='button' class='btn-2 image-change' id="+ res._id +" style='margin:10px 0 0 0;'>Image Change</button></div>"
+                itemList +="<div class='col-sm-3'><img src="+ ImageFilePath + 'banner/' +res.image.fileName +" /></div>"
+                itemList +="</td>"
                 itemList +="</tr>"
                 itemList +="<tr>"
-                itemList +="<td colspan='2'><textarea class='form-control' disabled>"+ res.content +"</textarea></td>"                 
+                itemList +="<td colspan='2'><label>Content</label><textarea class='form-control' disabled>"+ res.content +"</textarea></td>"                 
                 itemList +="</tr>"
+                itemList +="<tr>"
+                itemList +="<td><label>Button Name</label><input type='text' class='form-control' value="+ res.buttonname +" disabled /></td>"
+                itemList +="<td><label>Button URL</label><input type='text' class='form-control' value="+ res.buttonurl +" disabled /></td>"
+                itemList +="</tr>"
+                itemList +="<td colspan='2'><button type='button' class='btn-2 row-edit-btn'>Edit</button>&nbsp;"
+                itemList +="<button type='button' class='btn-2 row-update-btn' style='display:none;'>Update</button>&nbsp;"
+                itemList +="<button type='button' class='btn-1'>Delete</button></td>"
                 itemList +="</tbody>"
                 itemList +="</table></div>"                       
               });
@@ -150,12 +197,87 @@
           }  
         });  
       }
-    
+
+      $("#visible").change(function(){
+        if($(this).prop('checked') == true){
+          checkedVisibile = true;
+        }
+        else{
+          checkedVisibile = false;
+        }
+      });
+
+      var buttonactiveCheck = "";
+
+      $("#buttonactive").change(function(){
+        if($(this).prop('checked') == true){
+          $("#buttonname").prop('disabled',false);
+          $("#buttonurl").prop('disabled',false);
+          buttonactiveCheck = "true";
+        }
+        else{
+          $("#buttonname").prop('disabled',true);
+          $("#buttonurl").prop('disabled',true);
+          buttonactiveCheck = "false";
+        }
+      });
+
       $("#edit-btn").click(function(){
         $(this).hide();
         inputCheck(false);
+        $("#buttonname").prop('disabled',true);
+        $("#buttonurl").prop('disabled',true);
         $("#submit-btn").show();
       });
+
+      $("#submit-btn").click(function(){
+        $("#loader").show();      
+        var header = $("#header").val();
+        var image = $("#image")[0].files[0];
+        var content = $("#content").val();
+        var buttonname = $("#buttonname").val();
+        var buttonurl = $("#buttonurl").val();       
+
+        if(buttonname == ""){
+          buttonname = ""
+        }
+        if(buttonurl == ""){
+          buttonurl = ""
+        }
+
+        var data = new FormData();
+        data.append('name', header);
+        data.append('image', image);
+        data.append('content', content);        
+        data.append('buttonactive', buttonactiveCheck);
+        data.append('buttonname', buttonname);
+        data.append('buttonurl', buttonurl);
+        
+        $.ajax({  
+          url: APIURL + 'home/banner',  
+          type: 'POST',           
+          data : data,
+          contentType: false,
+          processData: false,
+          success: function(data) {  
+            $("#loader").hide();   
+            //loadData();   
+          },
+          error: function(error){
+            console.log(error)  
+          } 
+        }); 
+      });
+
+      $("#inner-grid-details").on('click', 'button.row-edit-btn', function(){
+        $(this).hide();
+        $(this).parent('tr').find('input').prop('disabled', false);
+        $(this).closest('tr').find('td button.row-update-btn').show();
+        $("#add-item-btn").hide();
+      }); 
+
+     // image-change
+
     
       $("#cancel-btn").click(function(){
         inputCheck(true);
@@ -166,6 +288,7 @@
     
       function inputCheck(evt){
         $("input , button, textarea").prop('disabled',evt);
+        $("input textarea").val('');
       }
     
     });

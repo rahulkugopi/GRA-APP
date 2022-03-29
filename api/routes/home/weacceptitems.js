@@ -69,11 +69,11 @@ router.get('/weacceptitems/:id',   getWeAcceptitemstems, (req,res) => {
 });
 
 // Updating one
-router.patch('/weacceptitems/:id', verifyTokens, getWeAcceptitemstems , async (req,res) => {
-    
+router.patch('/weacceptitems/:id', verifyTokens, upload.single('images'), getWeAcceptitemstems , async (req,res) => {
+
     const originalName = req.file.originalname.split(' ').join('');
       
-    res.weacceptitems.image = {
+    res.weacceptitems.images = {
         data:req.file.filename,
         contentType:'image/png',
         fileName: date + '-' + originalName.toLowerCase()

@@ -56,6 +56,7 @@
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+              <li class="breadcrumb-item"><a href="home.html">Home</a></li>
               <li class="breadcrumb-item active" aria-current="page">We Accept</li>
             </ol>
           </nav>
@@ -163,7 +164,7 @@
             $("#item-list").html('');
             $.each(data, function(index,val){  
               console.log(val)                
-              itemList +="<li id="+ val._id +"><div class='row'><div class='col-sm-4'><input class='additem form-control' value="+ ImageFilePath + val.images.fileName +" disabled></div><div class='col-sm-3'><form enctype='multipart/form-data'><input type='file' class='additem form-control files' name='images' style='padding: 3px;' disabled></form></div><div class='col-sm-2'><img src="+ ImageFilePath + 'weaccept/' + val.images.fileName +" width='70'/></div> <div class='col-sm-3'><button type='button' class='btn-2 row-edit-btn' id="+ val._id +" >Edit</button> <button type='button' class='btn-2 row-update-btn' id="+ val._id +" style='display:none;'>Update</button> <button type='button' class='btn-1 row-delete-btn'  id="+ val._id +" >Delete</button></div></div></li>"                       
+              itemList +="<li id="+ val._id +"><div class='row'><div class='col-sm-4'><input class='additem form-control' value="+ ImageFilePath + val.images.fileName +" disabled></div><div class='col-sm-3 form'><input type='file' class='additem form-control files' name='images' style='padding: 3px;' disabled></div><div class='col-sm-2'><img src="+ ImageFilePath + 'weaccept/' + val.images.fileName +" width='70'/></div> <div class='col-sm-3'><button type='button' class='btn-2 row-edit-btn' id="+ val._id +" >Edit</button> <button type='button' class='btn-2 row-update-btn' id="+ val._id +" style='display:none;'>Update</button> <button type='button' class='btn-1 row-delete-btn'  id="+ val._id +" >Delete</button></div></div></li>"                       
             });                  
             $("#item-list").append(itemList);
           }
@@ -215,14 +216,22 @@
           $("#loader").show();    
           $($that).hide();
           $($that).closest('li').find('div button.row-edit-btn').show();
-          var currentID = $($that).attr('id');
-          
+          var currentID = $($that).attr('id');          
           $($that).closest('li').find('div input').prop('disabled', true);
-          var currentData = $($that).closest('li').find('div input.files').currentData[0].files[0];         
-          console.log(currentData)
+          var currentData = $($that).closest('li').find('div.form input.files')[0].files[0];//.currentData[0].files[0];         
+          if(typeof currentData == 'undefined'){
+            $($that).closest('li').find('div.form input.files').addClass('validation').prop('disabled', false);
+            $("#loader").hide();   
+            $($that).show();
+            $($that).closest('li').find('div button.row-edit-btn').hide();
+            return;
+          }
+          else{
+            $($that).closest('li').find('div.form input.files').removeClass('validation');
+          }
           var data = new FormData();
           data.append('images', currentData);     
-
+        
           $.ajax({  
             url: APIURL + 'home/weacceptitems/'+currentID,  
             type: 'PATCH', 

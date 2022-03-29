@@ -3,15 +3,46 @@ const router = express.Router();
 const bannerDetails = require('../../model/home/banner');
 const userDetails = require('../../model/users/users');
 const verifyTokens = require('../verifyTokens/verifyTokens');
+const multer = require('multer');
+
+const date = Date.now();
+
+//define storage for the image
+const storage = multer.diskStorage({
+    // destination for file
+    destination:function(reqest,file,callback){
+        callback(null,'../uploads/banner');
+    },
+
+    //add back the extension
+    filename: function(reqest,file,callback){           
+        const originalName = file.originalname.split(' ').join('');
+        callback(null, date + '-' + originalName.toLowerCase());
+    }   
+});
+
+//upload parameter for multer
+const upload = multer({
+    storage:storage,
+    limits:{
+       fileSize:1024*1024*3
+    }
+});
 
 // Creating one
-router.post('/banner/', async (req,res) => {
+router.post('/banner/', upload.single('image'), async (req,res) => {
     
     //create new banner
+    const originalName = req.file.originalname.split(' ').join('');
     const banner = new bannerDetails({        
         name: req.body.name,
         content: req.body.content,
-        image: req.body.image,
+        image: {
+            data:req.file.filename,
+            contentType:'image/png',
+            fileName: date + '-' + originalName.toLowerCase()
+        },
+        buttonactive: req.body.buttonactive,
         buttonname: req.body.buttonname,
         buttonurl: req.body.buttonurl
     });

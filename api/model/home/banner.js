@@ -13,21 +13,20 @@ const bannerSchema = new mongoose.Schema({
         min:6,
         max:1024
     },
-    image: {
+    image:{ data:Buffer, contentType:String, fileName:String },
+    buttonactive:{
         type: String,
         required: true,
         min:6,
-        max:1024,
+        max:255 
     },
     buttonname: {
         type: String,
-        required: true,
         min:6,
         max:255
     },
     buttonurl: {
-        type: String,
-        required: true,
+        type: String,       
         min:6,
         max:255
     }

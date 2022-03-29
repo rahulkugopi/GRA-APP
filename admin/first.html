@@ -56,6 +56,7 @@
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+              <li class="breadcrumb-item"><a href="home.html">Home</a></li>
               <li class="breadcrumb-item active" aria-current="page">First Section</li>
             </ol>
           </nav>
@@ -152,7 +153,8 @@ $(document).ready(function(){
   loadData();
   itemsLoad();
   $("#submit-btn").hide();
-  
+  var checkedVisibile = "";
+
   function loadData(){
     $.ajax({  
       url: APIURL + 'home/first',  
@@ -172,9 +174,11 @@ $(document).ready(function(){
             $("#inner-id").attr('data-id',res._id);
             if(res.visible == "true"){
               $("#visible").prop('checked' , true);
+              checkedVisibile = "true";
             }
             else{
               $("#visible").prop('checked' , false);
+              checkedVisibile = "false";
             }
             
             
@@ -340,8 +344,6 @@ $(document).ready(function(){
     $(this).hide();
     $("#add-image-label").show();
   });
-
-  var checkedVisibile = "";
 
   $("#visible").change(function(){
     if($(this).prop('checked') == true){

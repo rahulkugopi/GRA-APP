@@ -311,22 +311,28 @@
               carouselAct+="<ol class='carousel-indicators'>"
               carouselItem+="<div class='carousel-inner' id='carousel-inner'>"
               $.each(data,function(index,res){
+
+                
                   if(index == 0){
                     carouselAct+="<li data-target='#carouselmain' data-slide-to="+ index +" class='active'></li>"                    
-                    carouselItem+="<div class='carousel-item bg1 active' style='background-image:url("+ res.image +")'>"
+                    carouselItem+="<div class='carousel-item bg1 active' style='background-image:url("+ ImageFilePath + 'banner/' + res.image.fileName +")'>"
                     carouselItem+="<div class='carousel-caption'>"
                     carouselItem+="<h1>"+ res.name +"</h1>"
-                    carouselItem+="<p>Become part of a global community of people who have found their path to the crypto world with GXSquare</p>"
-                    carouselItem+="<a href='https://account.gxsquare.com/login' target='_blank' class='btn-2'>Get Started</a>"
+                    carouselItem+="<p>"+ res.content +"</p>"
+                    if(res.buttonactive == "true"){
+                      carouselItem+="<a href="+ res.buttonurl +" target='_blank' class='btn-2'>"+ res.buttonname +"</a>"
+                    }                     
                     carouselItem+="</div></div>"
                   }
                   else{
                     carouselAct+="<li data-target='#carouselmain' data-slide-to="+ index +" class=''></li>"                    
-                    carouselItem+="<div class='carousel-item'  style='background-image:url("+ res.image +")'>"
+                    carouselItem+="<div class='carousel-item'  style='background-image:url("+ ImageFilePath + 'banner/' + res.image.fileName +")'>"
                     carouselItem+="<div class='carousel-caption'>"
                     carouselItem+="<h1>"+ res.name +"</h1>"
-                    carouselItem+="<p>Become part of a global community of people who have found their path to the crypto world with GXSquare</p>"
-                    carouselItem+="<a href='https://account.gxsquare.com/login' target='_blank' class='btn-2'>Get Started</a>"
+                    carouselItem+="<p>"+ res.content +"</p>"
+                    if(res.buttonactive == "true"){
+                      carouselItem+="<a href="+ res.buttonurl +" target='_blank' class='btn-2'>"+ res.buttonname +"</a>"
+                    } 
                     carouselItem+="</div></div>"
                   }                
               }); 

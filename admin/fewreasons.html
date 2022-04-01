@@ -75,48 +75,65 @@
          
         <div class="row">
           <div class="col-md-12">
-            <table class="table table-bordered">              
-              <tbody>
-                <tr>                 
-                  <td>
-                    <label>Header</label>
-                    <input type="text" class="form-control" id="header" />
-                  </td>                  
-                </tr>
-                <tr>
-                  <td colspan="2">
-                    <form enctype="multipart/form-data">
-                      <div class="row">                     
-                        <div class="col-md-12">
-                          <h2 style="margin:0px 0 15px 0;font-size: 16px;">Add Items</h2>
-                        </div>
-                        <div class="col-sm-6">
-                          <label>Grid Header</label>
-                          <input type="text" class="form-control" id="gridheader" name="gridheader"/>
-                        </div>
-                        <div class="col-sm-6">
-                          <label>Grid Image</label>
-                          <input type="file" class="form-control" id="gridimage" name="gridimage" style="padding: 3px;"/>
-                        </div>
-                        <div class="col-sm-12" style="margin:15px 0 0 0;">
-                          <label>Grid Content</label>
-                          <textarea class="form-control" id="gridcontent" name="gridcontent" style="padding: 3px;"></textarea>
-                        </div>
-                        <div class="col-sm-12" style="margin:15px 0 0 0;">
-                          <button type="button" class="btn-2" id="create-items-btn">Create Items</button>                        
-                          <button type="button" class="btn-1" id="cancel-btn">Cancel</button>               
-                        </div>                      
-                      </div>
-                    </form>
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2">                    
-                    <div id="inner-grid-details"></div>                    
-                  </td>
-                </tr>              
-              </tbody>
-            </table>            
+            <form enctype="multipart/form-data">
+              <div>
+                <table class="table table-bordered">  
+                  <tbody>
+                    <tr>
+                      <td>
+                        <label>Header</label>
+                        <textarea class="form-control" id="header" style="height:40px" disabled></textarea>
+                      </td>
+                    </tr>
+                    <tr>  
+                      <td>
+                        <button type="button" class="btn-2" id="submit-btn">Submit</button>
+                        <button type="button" class="btn-2" id="edit-btn">Edit</button>
+                        <button type="button" class="btn-1" id="cancel-btn">Cancel</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div style="margin:10px 0 0 0;">
+                <table class="table table-bordered">    
+                  <thead>
+                      <tr>
+                        <th colspan="3" style="font-weight:600;color:#000;background-color: #e9ecef;" class="text-uppercase">Add Items</th>
+                      </tr>
+                  </thead>            
+                  <tbody>
+                    <tr>                                                                          
+                      <td>
+                        <label>Grid Header</label>
+                        <textarea class="form-control" id="gridheader" name="gridheader"></textarea>
+                      </td>
+                      <td>
+                        <label>Grid Image</label>
+                        <input type="file" class="form-control" id="gridimage" name="gridimage" style="padding: 3px;"/>
+                      </td>
+                      <td>
+                        <label>Grid Content</label>
+                        <textarea class="form-control" id="gridcontent" name="gridcontent" style="padding: 3px;"></textarea>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="3">
+                        <button type="button" class="btn-2" id="create-items-btn">Create Items</button>                        
+                        <button type="button" class="btn-1" id="grid-ancel-btn">Cancel</button>          
+                      </td>      
+                    </tr>                     
+                    <tr>
+                      <td colspan="4">                    
+                        <div id="inner-grid-details"></div>                    
+                      </td>
+                    </tr>              
+                  </tbody>
+                </table>
+              </div>
+                
+            </form>          
           </div>
 
           <div class="col-md-12" id="nodatafound">
@@ -145,6 +162,9 @@ $(document).ready(function(){
   loadData();
   itemsLoad();  
   $("#nodatafound").hide();
+  $("#submit-btn").hide();    
+  $("#cancel-btn").hide();    
+  
   var checkedVisibile = "";
 
   function loadData(){
@@ -154,9 +174,12 @@ $(document).ready(function(){
       success: function(data) {              
         $("#loader").hide();
         $.each(data,function(index,res){
+          console.log(res)
           $("#edit-btn").prop('disabled' , false);
           $("#loader").hide();          
           $("#visible").attr('data-id', res._id);
+          $("#submit-btn").attr('data-id', res._id);
+          $("#header").val(res.mainheader);
           if(res.visible == "true"){
             $("#visible").prop('checked' , true);
             checkedVisibile = true;
@@ -197,7 +220,7 @@ $(document).ready(function(){
           itemList +="</tr>"
           itemList +="</tbody>"
           itemList +="<tr>"
-          itemList +="<td width='30%'><label>Header</label><textarea class='form-control gridheader "+ val._id +"' id='header"+ val._id +"' disabled style='height:40px;'>"+ val.gridheader +"</textarea></td>"
+          itemList +="<td width='30%'><label>Header</label><textarea class='form-control gridheader "+ val._id +"' id='header"+ val._id +"' disabled style='height:180px;'>"+ val.gridheader +"</textarea></td>"
           itemList +="<td width='30%'><div class='row'><div class='col-sm-12'><label>Image</label><input type='text' class='form-control gridimage' value="+ ImageFilePath + 'fewstep/' +val.gridimage.fileName +" disabled />"
           itemList +="<label for='image"+ val._id +"' class='btn-2 btn-small' id='add-image-label' style='margin:10px 0 0 0;'>Image Change</label>"                                                      
           itemList +="<input type='file' data-id='"+ val._id +"' id='image"+ val._id +"' class='file-hidden change-image' name='gridimage' /></div>"
@@ -252,6 +275,55 @@ $(document).ready(function(){
 
   });
 
+  $("#edit-btn").click(function(){
+    $(this).hide();
+    $("#header").prop('disabled', false);    
+    $("#submit-btn").show();    
+    $("#cancel-btn").show();  
+  });
+
+  $("#cancel-btn").click(function(){   
+    $(this).hide();       
+    $("#edit-btn").show();
+    $("#submit-btn").hide();
+    $("#header").prop('disabled', true);  
+  });
+
+  $("#submit-btn").click(function(){
+    var $that = this;
+    var currentID = $(this).attr('data-id')
+    $("#loader").show();    
+    
+    var header = $("#header").val();    
+
+    var data = {     
+      'mainheader': header      
+    }
+
+    $.ajax({  
+      url: APIURL + 'home/fewreasons/'+currentID,  
+      type: 'PATCH',  
+      beforeSend: function (xhr){ 
+          xhr.setRequestHeader('Authorization',accessToken); 
+      },
+      data : JSON.stringify(data),
+      contentType: 'application/json',
+      success: function(data) {          
+        loadData();
+        $("#loader").hide();   
+        $("#edit-btn").show();
+        $("#submit-btn").hide();
+        $($that).hide();        
+        $("#header").prop('disabled', true);  
+        $("#cancel-btn").hide();
+      },
+      error: function(error){
+        console.log(error)  
+      }  
+    });      
+  });
+
+
   $("#create-items-btn").click(function(){
       $("#loader").show();      
       var gridheader = $("#gridheader").val();
@@ -299,7 +371,12 @@ $(document).ready(function(){
           $("#loader").hide();   
         } 
       }); 
+    });
 
+    $("#grid-ancel-btn").click(function(){
+      $("#gridheader").val('');
+      $("#gridimage").val('');
+      $("#gridcontent").val('');
     });
 
     $("#inner-grid-details").on('change', 'input.change-image', function(){
@@ -393,25 +470,11 @@ $(document).ready(function(){
         });
     });
 
-    $("#edit-btn").click(function(){
-      $(this).hide();
-      inputCheck(false);      
-    });
-
-    $("#cancel-btn").click(function(){
-      inputCheck(true);
-      loadData();      
-      $("#edit-btn").show();
-    });
+    
 
     function inputCheck(evt){
       $("input , button, textarea").prop('disabled',evt);
-    }  
-
-  $("#submit-btn").click(function(){
-      
-
-  });                                                                                 
+    }                                                                                 
 
 });
 </script>  

@@ -79,29 +79,11 @@
                 <tr>                  
                   <td>
                     <label>Header</label>
-                    <input type="text" class="form-control" id="header" disabled/>
-                  </td>                 
-                </tr>
-                <tr>
-                  <td colspan="3">
+                    <textarea class="form-control" id="header" disabled></textarea>
+                  </td>                                 
+                  <td>
                     <label>Content</label>
-                    <input type="text" class="form-control" id="content" disabled/>
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="3">
-                    <div class="row">
-                      <div class="col-md-10">
-                        <label>Sub Item</label>
-                        <input type="text" class="form-control" id="add-item-input" disabled/>
-                        <div class="item-list">
-                          <ul id="item-list"></ul>
-                        </div>
-                      </div>
-                      <div class="col-md-2">
-                        <button type="button" class="btn-2 add-item-btn" id="add-item-btn" disabled>Add Item</button>                       
-                      </div>  
-                    </div>                                      
+                    <textarea class="form-control" id="content" disabled></textarea>
                   </td>
                 </tr>
                 <tr>
@@ -111,6 +93,24 @@
                     <button type="button" class="btn-1" id="cancel-btn">Cancel</button>
                   </td>
                 </tr>
+                <tr>
+                  <td colspan="3">
+                    <div class="row">
+                      <div class="col-md-10">
+                        <label>Sub Item</label>
+                        <input type="text" class="form-control" id="add-item-input"/>                      
+                      </div>
+                      <div class="col-md-2">
+                        <button type="button" class="btn-2 add-item-btn" id="add-item-btn">Add Item</button>                       
+                      </div>  
+                      <div class="col-md-10">
+                        <div class="item-list">
+                          <ul id="item-list"></ul>
+                        </div>
+                      </div>
+                    </div>                                      
+                  </td>
+                </tr>                
               </tbody>
             </table>
           </div>
@@ -120,16 +120,9 @@
     </div>    
   </div>
 
-  <script src="assets/js/jquery-3.4.1.min.js"></script>
-  <script src="assets/js/popper.min.js"></script>
-  <script src="assets/js/bootstrap.min.js"></script>
-  <script src="assets/js/amcharts-core.min.js"></script>
-  <script src="assets/js/amcharts.min.js"></script>
-  <script src="assets/js/custom.js"></script>
+  <script src="assets/js/jquery-3.4.1.min.js"></script> 
   <script src="assets/js/SITEURL.js"></script>
   <script src="assets/js/loginconfig.js"></script>
-
-
 
   <script>
     $(document).ready(function(){
@@ -139,6 +132,7 @@
       loadData();
       itemsLoad();
       $("#submit-btn").hide();
+      $("#cancel-btn").hide();
       var checkedVisibile = "";
 
       function loadData(){
@@ -148,11 +142,9 @@
           beforeSend: function (xhr){ 
               xhr.setRequestHeader('Authorization',accessToken); 
           },  
-          success: function(data) {  
-            console.log(data);
+          success: function(data) {              
              $.each(data,function(index,res){
                 $("#loader").hide();
-                $("#item-list").html('');
                 $("#header").val(res.header);
                 $("#content").val(res.content);
                 $("#submit-btn").attr('data-id',res._id);
@@ -165,8 +157,7 @@
                   $("#visible").prop('checked' , false);
                   checkedVisibile = 'false';
                 }                             
-    
-             })
+             });
           },
           error: function(error){
             console.log(error)  
@@ -185,12 +176,96 @@
             $("#item-list").html('');
             var itemList = "";
             $.each(data,function(index,val){
-              itemList +="<li id="+ val._id +"><div class='row'><div class='col-sm-9'><textarea class='additem form-control' disabled style='height: 40px;'>"+ val.items +"</textarea></div> <div class='col-sm-3'><button type='button' class='btn-2 row-edit-btn' id="+ val._id +" >Edit</button> <button type='button' class='btn-2 row-update-btn' id="+ val._id +" style='display:none;'>Update</button> <button type='button' class='btn-1 row-delete-btn'  id="+ val._id +" >Delete</button></div></div></li>"                       
+              itemList +="<li id="+ val._id +"><div class='row'><div class='col-sm-9'><textarea class='additem form-control' disabled style='height: 40px;'>"+ val.items +"</textarea></div> <div class='col-sm-3 text-right'><button type='button' class='btn-2 row-edit-btn' id="+ val._id +" >Edit</button> <button type='button' class='btn-2 row-update-btn' id="+ val._id +" style='display:none;'>Update</button> <button type='button' class='btn-1 row-delete-btn'  id="+ val._id +" >Delete</button></div></div></li>"                       
             });  
             $("#item-list").append(itemList);
           }
         });            
       }
+
+      $("#visible").change(function(){
+        var currentID = $(this).attr('data-id')
+        $("#loader").show();
+        if($(this).prop('checked') == true){
+          checkedVisibile = true;
+        }
+        else{
+          checkedVisibile = false;
+        }
+        var data = {
+          'visible':checkedVisibile    
+        }
+
+        $.ajax({  
+            url: APIURL + 'home/second/'+currentID,  
+            type: 'PATCH',  
+            beforeSend: function (xhr){ 
+              xhr.setRequestHeader('Authorization',accessToken); 
+            },
+            data : JSON.stringify(data),
+            contentType: 'application/json',
+            success: function(data) {                      
+              $("#loader").hide();   
+              loadData();
+              itemsLoad();
+            },
+            error: function(error){
+              console.log(error)  
+            }  
+        }); 
+      });
+
+      $("#edit-btn").click(function(){
+        $(this).hide();
+        inputCheck(false);
+        $("#submit-btn").show();
+        $("#cancel-btn").show();
+      });
+    
+      $("#cancel-btn").click(function(){
+        $(this).hide();
+        inputCheck(true);
+        $("#submit-btn").hide();        
+        $("#edit-btn").show().prop('disabled', false); 
+      });      
+    
+      $("#submit-btn").click(function(){
+        var $that = this;
+        var currentID = $(this).attr('data-id')
+        $("#loader").show();
+        
+        var header = $("#header").val();
+        var content = $("#content").val();        
+    
+        var data = {          
+          'header': header, 
+          'content' : content
+        }
+    
+        $.ajax({  
+          url: APIURL + 'home/second/'+currentID,  
+          type: 'PATCH',  
+          beforeSend: function (xhr){ 
+              xhr.setRequestHeader('Authorization',accessToken); 
+          },
+          data : JSON.stringify(data),
+          contentType: 'application/json',
+          success: function(data) {          
+            loadData();
+            itemsLoad();
+            $("#loader").hide();   
+            $("#edit-btn").show();
+            $("#submit-btn").hide();
+            $($that).hide();
+            inputCheck(true);
+            $("#edit-btn").prop('disabled', false);        
+            $("#cancel-btn").hide();     
+          },
+          error: function(error){
+            console.log(error)  
+          }  
+        });      
+      });
     
       $("#add-item-btn").click(function(){
         $("#loader").show();  
@@ -273,89 +348,9 @@
           });
       });
     
-      $("#edit-btn").click(function(){
-        $(this).hide();
-        inputCheck(false);
-        $("#submit-btn").show();
-      });
-    
-      $("#cancel-btn").click(function(){
-        inputCheck(true);
-        $("#submit-btn").hide();
-        $("#edit-btn").show();
-      });      
-
-      $("#visible").change(function(){
-        var currentID = $(this).attr('data-id')
-        $("#loader").show();
-        if($(this).prop('checked') == true){
-          checkedVisibile = true;
-        }
-        else{
-          checkedVisibile = false;
-        }
-        var data = {
-          'visible':checkedVisibile    
-        }
-
-        $.ajax({  
-            url: APIURL + 'home/second/'+currentID,  
-            type: 'PATCH',  
-            beforeSend: function (xhr){ 
-              xhr.setRequestHeader('Authorization',accessToken); 
-            },
-            data : JSON.stringify(data),
-            contentType: 'application/json',
-            success: function(data) {                      
-              $("#loader").hide();   
-              loadData();
-              itemsLoad();
-            },
-            error: function(error){
-              console.log(error)  
-            }  
-        }); 
-      });
-    
-      $("#submit-btn").click(function(){
-        var currentID = $(this).attr('data-id')
-        $("#loader").show();
-        $(this).hide();
-        inputCheck(true);
-        $("#edit-btn").prop('disabled', false);
-        $("#submit-btn").show();        
-        
-        var header = $("#header").val();
-        var content = $("#content").val();        
-    
-        var data = {          
-          'header': header, 
-          'content' : content
-        }
-    
-        $.ajax({  
-          url: APIURL + 'home/second/'+currentID,  
-          type: 'PATCH',  
-          beforeSend: function (xhr){ 
-              xhr.setRequestHeader('Authorization',accessToken); 
-          },
-          data : JSON.stringify(data),
-          contentType: 'application/json',
-          success: function(data) {          
-            loadData();
-            itemsLoad();
-            $("#loader").hide();   
-            $("#edit-btn").show();
-            $("#submit-btn").hide();
-          },
-          error: function(error){
-            console.log(error)  
-          }  
-        });      
-      });
-    
       function inputCheck(evt){
-        $("input , button").prop('disabled',evt);
+        $("#header").prop('disabled',evt);
+        $("#content").prop('disabled',evt);
       }
     
       $("input").keydown(function(){

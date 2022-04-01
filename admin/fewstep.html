@@ -120,17 +120,24 @@
                     <tr>
                       <td colspan="3">
                         <button type="button" class="btn-2" id="create-items-btn">Create Items</button>                        
-                        <button type="button" class="btn-1" id="cancel-btn">Cancel</button>     
+                        <button type="button" class="btn-1" id="grid-cancel-btn">Cancel</button>     
                        </td>
-                    </tr>    
-                    <tr>
-                      <td colspan="3">                    
-                        <div id="inner-grid-details"></div>                    
-                      </td>
-                    </tr>              
+                    </tr>                                   
                   </tbody>
                 </table>
               </div>  
+              <div class="col-sm-12 nop">
+                <div class="col-md-12 nop">
+                  <div class="hdr-item-det">
+                    <h2>Item Details</h2>                    
+                    <p>Total Items : <span id="total-items"></span></p>
+                  </div>                    
+                </div>
+
+                <div class="col-md-12 nop" style="margin:20px 0 0 0;">
+                  <div id="inner-grid-details"></div>       
+                </div>                
+              </div>
           </form>
           </div>
 
@@ -210,9 +217,10 @@
 
             var itemList = "";
             $("#inner-grid-details").html('');
+            var rowCount = "";
             $.each(data, function(index,val){              
-              var rowCount = index+1;           
-              itemList +="<div style='margin:0 0 20px 0;' class='col-sm-12 few-inner-grid' id='inner-"+ val._id +"'><table class='table'>"
+              rowCount = index+1;                   
+              itemList +="<div style='margin:0 0 20px 0;' class='col-sm-12 few-inner-grid nop' id='inner-"+ val._id +"'><table class='table table-bordered'>"
               itemList +="<tbody>"
               itemList +="<tr>"
               itemList +="<td colspan='3' style='font-weight:bold;background-color:#e9ecef;'>Grid "+ rowCount +"</td>"                   
@@ -234,7 +242,7 @@
               itemList +="</tbody>"
               itemList +="</table></div>"                       
             });  
-
+            $("#total-items").text(rowCount);
             $("#inner-grid-details").append(itemList);
           }
         });    
@@ -332,18 +340,27 @@
           $("#loader").hide();      
           return;
         }
+        else{
+          $("#gridheader").removeClass('validation');
+        }
         
         if($("#gridimage").val() == ""){
           $("#gridimage").addClass('validation');
           $("#loader").hide();      
           return;
-        }     
+        }    
+        else{
+          $("#gridimage").removeClass('validation');
+        } 
         
         if(gridcontent == ""){
           $("#gridcontent").addClass('validation');
           $("#loader").hide();      
           return;
-        }   
+        }  
+        else{
+          $("#gridcontent").removeClass('validation');
+        } 
 
         var data = new FormData();
         data.append('gridheader', gridheader);        
@@ -366,10 +383,15 @@
           error: function(error){
             console.log(error)  
           } 
-        }); 
-
+        });                                                                                    
       });
       
+      $("#grid-cancel-btn").click(function(){
+        $("#gridheader").val('');
+        $("#gridimage").val('');
+        $("#gridcontent").val('');
+      });
+
       $("#inner-grid-details").on('change', 'input.change-image', function(){
         $("#loader").show();  
         var currentID = $(this).attr('data-id');     

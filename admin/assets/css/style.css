@@ -208,6 +208,20 @@ input:checked + .toggle-checkbox:before {
    text-align: center;
 }
 
+.hdr-item-det{
+    margin:20px 0 0 0;
+}
+
+.hdr-item-det h2{
+    font-size: 18px;
+    margin: 0px;
+    text-transform: uppercase;
+}
+.hdr-item-det p{
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
 ul,
 ol {
     margin: 0;

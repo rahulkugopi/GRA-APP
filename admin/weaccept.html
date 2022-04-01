@@ -82,30 +82,32 @@
                       <label>Header</label>
                       <input type="text" class="form-control" id="header" disabled/>
                     </td>                  
-                  </tr>               
-                  <tr>
-                    <td colspan="2">
-                      <div class="row">
-                        <div class="col-md-10">
-                          <label>Add Images</label>                        
-                          <input type="file" class="form-control" id="add-item-input" name="images" style="padding: 3px;"/>
-                          <div class="item-list">
-                            <ul id="item-list"></ul>
-                          </div>
-                        </div>
-                        <div class="col-md-2">
-                          <button type="button" class="btn-2 add-item-btn" id="add-item-btn">Add Item</button>
-                        </div>  
-                      </div>                                      
-                    </td>
-                  </tr>
+                  </tr>   
                   <tr>
                     <td colspan="2">
                       <button type="button" class="btn-2" id="submit-btn">Submit</button>
                       <button type="button" class="btn-2" id="edit-btn">Edit</button>
                       <button type="button" class="btn-1" id="cancel-btn">Cancel</button>
                     </td>
-                  </tr>
+                  </tr>            
+                  <tr>
+                    <td colspan="2">
+                      <div class="row">
+                        <div class="col-md-10">
+                          <label>Add Images</label>                        
+                          <input type="file" class="form-control" id="add-item-input" name="images" style="padding: 3px;"/>                         
+                        </div>
+                        <div class="col-md-2">
+                          <button type="button" class="btn-2 add-item-btn" id="add-item-btn">Add Item</button>
+                        </div>  
+                        <div class="col-md-10">
+                          <div class="item-list">
+                            <ul id="item-list"></ul>
+                          </div>
+                        </div>
+                      </div>                                      
+                    </td>
+                  </tr>                  
                 </tbody>
               </table>
             </form>
@@ -169,7 +171,7 @@
             $("#item-list").html('');
             $.each(data, function(index,val){  
               console.log(val)                
-              itemList +="<li id="+ val._id +"><div class='row'><div class='col-sm-4'><input class='additem form-control' value="+ ImageFilePath + val.images.fileName +" disabled></div><div class='col-sm-3 form'><input type='file' class='additem form-control files' name='images' style='padding: 3px;' disabled></div><div class='col-sm-2'><img src="+ ImageFilePath + 'weaccept/' + val.images.fileName +" width='70'/></div> <div class='col-sm-3'><button type='button' class='btn-2 row-edit-btn' id="+ val._id +" >Edit</button> <button type='button' class='btn-2 row-update-btn' id="+ val._id +" style='display:none;'>Update</button> <button type='button' class='btn-1 row-delete-btn'  id="+ val._id +" >Delete</button></div></div></li>"                       
+              itemList +="<li id="+ val._id +"><div class='row'><div class='col-sm-4'><input class='additem form-control' value="+ ImageFilePath + val.images.fileName +" disabled></div><div class='col-sm-3 form'><input type='file' class='additem form-control files' name='images' style='padding: 3px;' disabled></div><div class='col-sm-2'><img src="+ ImageFilePath + 'weaccept/' + val.images.fileName +" width='70'/></div> <div class='col-sm-3 text-right'><button type='button' class='btn-2 row-edit-btn' id="+ val._id +" >Edit</button> <button type='button' class='btn-2 row-update-btn' id="+ val._id +" style='display:none;'>Update</button> <button type='button' class='btn-1 row-delete-btn'  id="+ val._id +" >Delete</button></div></div></li>"                       
             });                  
             $("#item-list").append(itemList);
           }
@@ -314,7 +316,7 @@
       });
     
       function inputCheck(evt){
-        $("input , button, textarea").prop('disabled',evt);
+        $("#header").prop('disabled',evt);
       }            
 
       $("#submit-btn").click(function(){

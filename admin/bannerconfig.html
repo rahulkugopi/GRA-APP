@@ -72,23 +72,23 @@
                   <tr>                   
                     <td colspan="2">
                       <label>Header</label>
-                      <input type="text" class="form-control" id="header" name="name" disabled/>
+                      <input type="text" class="form-control" id="header" name="name" />
                     </td> 
                     <td>
                       <label>Image</label>
-                      <input type="file" class="form-control" id="image" name="image" disabled style="padding: 3px;"/>
+                      <input type="file" class="form-control" id="image" name="image"  style="padding: 3px;"/>
                     </td>                                                    
                   </tr>
                   <tr>
                     <td colspan="3">
                       <label>Content</label>
-                      <textarea class="form-control" id="content" name="content" disabled></textarea>
+                      <textarea class="form-control" id="content" name="content" ></textarea>
                     </td> 
                   </tr>   
                   <tr>
                     <td>
                       <label>Button Active</label>
-                      <input type="checkbox" class="form-control" id="buttonactive" name="buttonactive" disabled/>
+                      <input type="checkbox" class="form-control" id="buttonactive" name="buttonactive" />
                     </td>
                     <td>
                       <label>Button Name</label>
@@ -101,8 +101,7 @@
                   </tr>                          
                   <tr>
                     <td>
-                      <button type="button" class="btn-2" id="submit-btn">Submit</button>
-                      <button type="button" class="btn-2" id="edit-btn">Edit</button>
+                      <button type="button" class="btn-2" id="create-btn">Create Banner</button>                      
                       <button type="button" class="btn-1" id="cancel-btn">Cancel</button>
                     </td>
                   </tr>
@@ -110,7 +109,21 @@
               </table> 
             </form>             
           </div>
-          <div class="col-md-12" id="inner-grid-details" style="margin:35px 0 0 0;"></div>   
+
+          <div class="col-sm-12 nop">
+            <div class="col-md-12">
+              <div class="hdr-item-det">
+                <h2>Banner Details</h2>                    
+                <p>Total Items : <span id="total-items"></span></p>
+              </div>                    
+            </div>
+
+            <div class="col-md-12 nop" style="margin:20px 0 0 0;">
+              <div class="col-md-12" id="inner-grid-details" style="margin:15px 0 0 0;"></div>   
+            </div>                
+          </div>
+
+          
           <div class="col-md-12" id="nodatafound" style="margin: 35px 0 0 0;background: #e7e7e7;text-align: center;padding: 10px;">
             <p style="margin:0px;">No data found!</p>
           </div>        
@@ -134,7 +147,6 @@
       var accessToken = localStorage.getItem('accessToken');    
 
       loadData();
-      $("#submit-btn").hide();
       $("#nodatafound").hide();
       var checkedVisibile = "false";
 
@@ -153,11 +165,11 @@
 
               $("#inner-grid-details").html('');
               var itemList = "";
-              $.each(data,function(index,res){
-                $("#edit-btn").prop('disabled' , false);
+              var rowCount = "";
+              $.each(data,function(index,res){                
                 $("#loader").hide();
                 
-                $("#submit-btn").attr('data-id',res._id);
+                $("#create-btn").attr('data-id',res._id);
                 if(res.visible == "true"){
                   $("#visible").prop('checked' , true);
                   checkedVisibile = "true";
@@ -166,9 +178,14 @@
                   $("#visible").prop('checked' , false);
                   checkedVisibile = "false";
                 }
-                var rowCount = index+1
+                rowCount = index+1
                 
-                itemList +="<div style='margin:0 0 20px 0;' class='few-inner-grid'><h1>Banner "+ rowCount +"</h1><table class='table table-bordered'>"
+                itemList +="<div style='margin:0 0 20px 0;' class='few-inner-grid'><table class='table table-bordered'>"
+                itemList +="<thead>"
+                itemList +="<tr>"
+                itemList +="<th style='background-color: #e9ecef;color:#000;' colspan='2'>Banner "+ rowCount +"</th>"
+                itemList +="</tr>"                      
+                itemList +="</thead>"
                 itemList +="<tbody>"
                 itemList +="<tr>"
                 itemList +="<td width='40%'><label>Header</label><input type='text' class='form-control "+ res._id +"' id='header"+ res._id +"' value="+ res.name +" disabled /></td>"
@@ -196,6 +213,7 @@
                 itemList +="</tbody>"
                 itemList +="</table></div>"                       
               });
+              $("#total-items").text(rowCount);
               $("#inner-grid-details").append(itemList);
           },
           error: function(error){
@@ -227,16 +245,8 @@
           buttonactiveCheck = "false";
         }
       });
-
-      $("#edit-btn").click(function(){
-        $(this).hide();
-        inputCheck(false);
-        $("#buttonname").prop('disabled',true);
-        $("#buttonurl").prop('disabled',true);
-        $("#submit-btn").show();
-      });
-
-      $("#submit-btn").click(function(){
+    
+      $("#create-btn").click(function(){
         $("#loader").show();      
         var header = $("#header").val();
         var image = $("#image")[0].files[0];
@@ -381,8 +391,7 @@
       $("#cancel-btn").click(function(){
         inputCheck(true);
         loadData();
-        $("#submit-btn").hide();
-        $("#edit-btn").show();
+        $("#create-btn").hide();        
       });
     
       function inputCheck(evt){

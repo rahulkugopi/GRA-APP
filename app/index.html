@@ -464,23 +464,30 @@
               }
               
               $("#few-step-hdr").html(res.mainheader);
-             
+            });               
+          }
+        });
+
+        $.ajax({  
+          url: APIURL + 'home/fewstepitems',  
+          type: 'GET',  
+          success: function(data) {                   
               $("#few-step-items").html('');
               var itemList = "";
               itemList +="<div class='row'>"
-              $.each(res.grid,function(index,val){
+              $.each(data,function(index,val){
+                console.log(val)
                 var rowCount = index+1
                 itemList +="<div class='col-md-4'>"         
                 itemList +="<div class='landing-feature-item'>"
-                itemList +="<img src="+ val.gridimage +" alt=''>"
+                itemList +="<img src="+ ImageFilePath + 'fewstep/' +  val.gridimage.fileName +" alt=''>"
                 itemList +="<span>"+ rowCount +"</span>"
                 itemList +="<h3>"+ val.gridheader +"</h3>"
                 itemList +="</div></div>"                       
               });  
               itemList +="</div>"
               $("#few-step-items").append(itemList);              
-              
-            });
+
           }
         });
       }
@@ -538,7 +545,7 @@
               
             itemList +="</div>"
             $("#footer-content").append(itemList);   
-                
+
           }
         });
       }

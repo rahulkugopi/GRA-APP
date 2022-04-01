@@ -29,6 +29,7 @@ app.use('/api/home/', require('./routes/home/second'));
 app.use('/api/home/', require('./routes/home/seconditems'));
 app.use('/api/home/', require('./routes/home/fewreasons'));
 app.use('/api/home/', require('./routes/home/fewstep'));
+app.use('/api/home/', require('./routes/home/fewstepitems'));
 app.use('/api/home/', require('./routes/home/weaccept'));
 app.use('/api/home/', require('./routes/home/weacceptitems'));
 app.use('/api/home/', require('./routes/home/footer'));

@@ -90,6 +90,20 @@
                     </td>
                   </tr>
                   <tr>
+                    <td colspan="2">
+                      <label>Drop Down Menu</label>
+                      <select class="form-control" id="dropdownactive" name="dropdownactive">
+                        <option value="0">Select</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                      </select>
+                    </td>
+                    <td colspan="2">
+                      <label>Drop Down Menu Name</label>
+                      <input type="text" class="form-control" id="dropdownname"  name="" disabled/>
+                    </td>
+                  </tr>
+                  <tr>
                     <td colspan="3">
                       <button type="button" class="btn-2" id="create-new">Create New Menu</button>                    
                       <button type="button" class="btn-1" id="cancel-new">Cancel</button>
@@ -113,11 +127,13 @@
             <table class="table table-bordered">
               <thead>
                 <tr>
-                  <th style="border-right: 1px solid #dee2e6!important;background-color: #e9ecef;color:#000;">#</th>
-                  <th style="border-right: 1px solid #dee2e6!important;background-color: #e9ecef;color:#000;">Actiev</th>
-                  <th style="border-right: 1px solid #dee2e6!important;background-color: #e9ecef;color:#000;">Menu Name</th>
-                  <th style="border-right: 1px solid #dee2e6!important;background-color: #e9ecef;color:#000;">Manu Path</th>
-                  <th style="border-right: 1px solid #dee2e6!important;background-color: #e9ecef;color:#000;">Menu File Name</th>
+                  <th style="border-right: 1px solid #dee2e6!important;background-color: #e9ecef;color:#000;" width="5%">#</th>
+                  <th style="border-right: 1px solid #dee2e6!important;background-color: #e9ecef;color:#000;" width="8%">Active</th>
+                  <th style="border-right: 1px solid #dee2e6!important;background-color: #e9ecef;color:#000;" width="12%">Drop Active</th>
+                  <th style="border-right: 1px solid #dee2e6!important;background-color: #e9ecef;color:#000;" width="15%">Drop Down Name</th>
+                  <th style="border-right: 1px solid #dee2e6!important;background-color: #e9ecef;color:#000;" width="10%">Menu Name</th>
+                  <th style="border-right: 1px solid #dee2e6!important;background-color: #e9ecef;color:#000;" width="10%">Manu Path</th>
+                  <th style="border-right: 1px solid #dee2e6!important;background-color: #e9ecef;color:#000;" width="16%">Menu File Name</th>
                   <th style="background-color: #e9ecef;" width="25%"></th>
                 </tr>
               </thead>
@@ -189,6 +205,23 @@ $(document).ready(function(){
           itemList +="<span class='toggle-checkbox round'></span>"
           itemList +="</label>"
           itemList +="</td>"
+          itemList +="<td><select class='form-control drop-select " + val._id + "' id='dropdownactive" + val._id + "' disabled>"
+          itemList +="<option value='0'>Select</option>"
+          if(val.dropdownactive == "Yes"){
+            itemList +="<option value='Yes' selected>Yes</option>"
+          }
+          else{
+            itemList +="<option value='Yes'>Yes</option>"
+          }
+          
+          if(val.dropdownactive == "No"){
+            itemList +="<option value='Yes' selected>No</option>"
+          } 
+          else{
+            itemList +="<option value='Yes'>No</option>"
+          }                   
+          itemList +="</select></td>"         
+          itemList +="<td><textarea class='form-control " + val._id + "' id='dropdownname" + val._id + "' disabled style='height:40px;'>" + val.dropdownname + "</textarea></td>"                    
           itemList +="<td><textarea class='form-control " + val._id + "' id='menu" + val._id + "' disabled style='height:40px;'>"+ val.menu +"</textarea></td>"
           itemList +="<td><textarea class='form-control " + val._id + "' id='filepath" + val._id + "' disabled style='height:40px;'>"+ val.filepath +"</textarea></td>"
           itemList +="<td><textarea class='form-control " + val._id + "' id='filename" + val._id + "' disabled style='height:40px;'>"+ val.filename +"</textarea></td>"
@@ -220,18 +253,79 @@ $(document).ready(function(){
       checkedVisibile = "false";
     }  
   });
+  
+ $("#dropdownactive").change(function(){
+    var currentValue = $(this).val();
+    if(currentValue == "Yes"){
+      $("#dropdownname").prop('disabled', false);
+    }
+    else{
+      $("#dropdownname").prop('disabled', true);
+    }
+ });
 
   $("#create-new").click(function(){
     $("#loader").show();   
     var MenuName = $("#menu").val();
     var FilePath = $("#filepath").val();
     var FileName = $("#filename").val();
+    var Dropdownactive = $("#dropdownactive").val();
+    var Dropdownname = $("#dropdownname").val();
+
+    if(MenuName == ""){
+      $("#menu").addClass('validation').focus();
+      $("#loader").hide();   
+      return;
+    }
+    else{
+      $("#menu").removeClass('validation');
+    }
+
+    if(FilePath == ""){
+      $("#filepath").addClass('validation').focus();
+      $("#loader").hide();
+      return;
+    }
+    else{
+      $("#filepath").removeClass('validation');
+    }
+
+    if(FileName == ""){
+      $("#filename").addClass('validation').focus();
+      $("#loader").hide();
+      return;
+    }
+    else{
+      $("#filename").removeClass('validation');
+    }
+
+    if(Dropdownactive == "0"){
+      $("#dropdownactive").addClass('validation').focus();
+      $("#loader").hide();
+      return;         
+    }
+
+    if(Dropdownactive == "Yes"){
+      if(Dropdownname == ""){
+        $("#dropdownname").addClass('validation').focus();
+        $("#loader").hide();
+        return;
+      }
+      else{
+        $("#dropdownname").removeClass('validation');
+      }
+    } 
+    else{
+      $("#dropdownactive").removeClass('validation');
+    } 
     
     var data = {     
       'active':checkedVisibile,
       'menu': MenuName,
       'filepath': FilePath,
-      'filename': FileName     
+      'filename': FileName,
+      'dropdownactive':Dropdownactive,
+      'dropdownname':Dropdownname
     }
 
     $.ajax({  
@@ -249,6 +343,7 @@ $(document).ready(function(){
         $("#filepath").val('');
         $("#filename").val('');  
         $("#visible").prop('checked',  false);
+        $("#dropdownactive").val('0');
       },
       error: function(error){
         console.log(error)  
@@ -275,8 +370,19 @@ $(document).ready(function(){
     var currentID = $(this).attr('id');        
     $(this).hide();
     $('.'+ currentID +'').prop('disabled', true);
-    $(this).closest('tr').find('td button.row-edit-btn').show(); 
+    $(this).closest('tr').find('td button.row-edit-btn').show();  
     $(this).closest('tr').find('td button.row-update-btn, button.row-cancel-btn').hide();        
+  });
+
+  $("#inner-grid-details").on('change', 'select.drop-select', function(){     
+    var currentValue = $(this).val();    
+    var currentID = $(this).attr('id');   
+    if(currentValue == "Yes"){
+      $('.'+ currentID +'').prop('disabled', false);
+    }    
+    else{
+      $('.'+ currentID +'').prop('disabled', true);
+    }
   });
 
   $("#inner-grid-details").on('click', 'button.row-update-btn', function(){
@@ -289,13 +395,17 @@ $(document).ready(function(){
       var active = $('#active'+ currentID +'').prop('checked');
       var menu = $('#menu'+ currentID +'').val(); 
       var filepath = $('#filepath'+ currentID +'').val(); 
-      var filename = $('#filename'+ currentID +'').val();       
+      var filename = $('#filename'+ currentID +'').val();  
+      var dropdownname = $('#dropdownname'+ currentID +'').val();  
+      var dropdownactive = $('#dropdownactive'+ currentID +'').val();       
 
       var data = {
         'active':active,
         'menu':menu,
         'filepath':filepath,
-        'filename':filename        
+        'filename':filename,
+        'dropdownname':dropdownname,
+        'dropdownactive':dropdownactive
       }
 
       $.ajax({  
@@ -314,7 +424,26 @@ $(document).ready(function(){
           console.log(error)  
         }  
       });
+    });
 
+    $("#inner-grid-details").on('click', 'button.row-delete-btn', function(){
+        var currentID = $(this).attr('id');
+        $("#loader").show();  
+        $.ajax({  
+          url: APIURL + 'home/menu/'+currentID,  
+          type: 'DELETE', 
+          beforeSend: function (xhr){ 
+            xhr.setRequestHeader('Authorization',accessToken); 
+          },                 
+          success: function(data) {  
+            loadData();
+            $("#loader").hide();                     
+          }
+        });
+    });
+
+    $("inputm, select").change(function(){
+      $(this).removeClass('validation');
     });
 
 });

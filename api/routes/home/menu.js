@@ -12,7 +12,9 @@ router.post('/menu/',  verifyTokens, async (req,res) => {
         active:req.body.active,      
         menu: req.body.menu,  
         filepath: req.body.filepath,  
-        filename: req.body.filename             
+        filename: req.body.filename,
+        dropdownactive: req.body.dropdownactive,
+        dropdownname: req.body.dropdownname              
     });
    
     try {
@@ -57,6 +59,12 @@ router.patch('/menu/:id', verifyTokens, getMenu , async (req,res) => {
     } 
     if(req.body.filename != null){
         res.menu.filename = req.body.filename;
+    }
+    if(req.body.dropdownactive != null){
+        res.menu.dropdownactive = req.body.dropdownactive;
+    }
+    if(req.body.dropdownname != null){
+        res.menu.dropdownname = req.body.dropdownname;
     }        
 
     try {

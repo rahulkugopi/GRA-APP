@@ -24,7 +24,19 @@ const menuSchema = new mongoose.Schema({
         required: true,
         min:6,
         max:255 
+    },
+    dropdownactive :{ 
+        type: String,
+        required: true,
+        min:6,
+        max:255 
+    },
+    dropdownname :{ 
+        type: String,
+        min:6,
+        max:255 
     }
+
 });
 
 module.exports = mongoose.model('menuDetails', menuSchema);

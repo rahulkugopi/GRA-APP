@@ -286,12 +286,35 @@
       });      
 
       $("#visible").change(function(){
+        var currentID = $(this).attr('data-id')
+        $("#loader").show();
         if($(this).prop('checked') == true){
           checkedVisibile = true;
         }
         else{
           checkedVisibile = false;
         }
+        var data = {
+          'visible':checkedVisibile    
+        }
+
+        $.ajax({  
+            url: APIURL + 'home/second/'+currentID,  
+            type: 'PATCH',  
+            beforeSend: function (xhr){ 
+              xhr.setRequestHeader('Authorization',accessToken); 
+            },
+            data : JSON.stringify(data),
+            contentType: 'application/json',
+            success: function(data) {                      
+              $("#loader").hide();   
+              loadData();
+              itemsLoad();
+            },
+            error: function(error){
+              console.log(error)  
+            }  
+        }); 
       });
     
       $("#submit-btn").click(function(){
@@ -305,8 +328,7 @@
         var header = $("#header").val();
         var content = $("#content").val();        
     
-        var data = {
-          'visible':checkedVisibile,
+        var data = {          
           'header': header, 
           'content' : content
         }

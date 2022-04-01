@@ -86,48 +86,47 @@
                     <td>
                       <label>Images</label>
                       <div class="row">
-                        <div class="col-md-9">
+                        <div class="col-md-12">
                           <input type="text" class="form-control" id="image" disabled/>
                           <div class="btn-section">                            
                             <label for="add-image" class='btn-2 btn-small' id="add-image-label">Image Change</label>                                                       
                             <input type="file" id="add-image" class="file-hidden" name="image" />                                                                                                                                             
                           </div>                        
                         </div>
-                        <div class="col-md-3">
-                          <img src="" id="img-view" width="150" style="margin: -7px 0 0 0;"/>
+                        <div class="col-md-12">
+                          <img src="" id="img-view" style="width:100%;height:100px;object-fit: scale-down;"/>
                         </div>
                       </div>                    
                     </td>
-                  </tr>
-                  <tr>
                     <td colspan="3">
                       <label>Content</label>
-                      <input type="text" class="form-control" id="content" disabled/>
+                      <textarea class="form-control" id="content" disabled style="height:165px;"></textarea>
                     </td>
-                  </tr>
+                  </tr>  
+                  <tr>
+                    <td colspan="3">
+                      <button type="button" class="btn-2" id="submit-btn">Submit</button>
+                      <button type="button" class="btn-2" id="edit-btn">Edit</button>
+                      <button type="button" class="btn-1" id="cancel-btn">Cancel</button>
+                    </td>
+                  </tr>                
                   <tr>
                     <td colspan="3">
                       <div class="row">
                         <div class="col-md-10">
                           <label>Sub Item</label>
-                          <input type="text" class="form-control" id="add-item-input" disabled/>
+                          <input type="text" class="form-control" id="add-item-input"/>
                           <div class="item-list">
                             <ul id="item-list"></ul>
                           </div>
                         </div>
                         <div class="col-md-2">
-                          <button type="button" class="btn-2 add-item-btn" id="add-item-btn" disabled>Add Item</button>
+                          <button type="button" class="btn-2 add-item-btn" id="add-item-btn">Add Item</button>
                         </div>  
                       </div>                                      
                     </td>
                   </tr>
-                  <tr>
-                    <td colspan="2">
-                      <button type="button" class="btn-2" id="submit-btn">Submit</button>
-                      <button type="button" class="btn-2" id="edit-btn">Edit</button>
-                      <button type="button" class="btn-1" id="cancel-btn">Cancel</button>
-                    </td>
-                  </tr>
+                 
                 </tbody>
               </table>
             </form> 
@@ -138,15 +137,9 @@
     </div>    
   </div>
 
-  <script src="assets/js/jquery-3.4.1.min.js"></script>
-  <script src="assets/js/popper.min.js"></script>
-  <script src="assets/js/bootstrap.min.js"></script>
-  <script src="assets/js/amcharts-core.min.js"></script>
-  <script src="assets/js/amcharts.min.js"></script>
-  <script src="assets/js/custom.js"></script>
+  <script src="assets/js/jquery-3.4.1.min.js"></script>>
   <script src="assets/js/SITEURL.js"></script>
   <script src="assets/js/loginconfig.js"></script>
-
 
 
 <script>
@@ -167,8 +160,7 @@ $(document).ready(function(){
           xhr.setRequestHeader('Authorization',accessToken); 
       },
       success: function(data) {                  
-         $.each(data,function(index,res){
-            
+         $.each(data,function(index,res){            
             $("#loader").hide();           
             $("#header").val(res.header);
             $("#image").val(ImageFilePath + 'firstsection/' + res.image.fileName);
@@ -184,9 +176,7 @@ $(document).ready(function(){
             else{
               $("#visible").prop('checked' , false);
               checkedVisibile = "false";
-            }
-            
-            
+            }                      
          })
       },
       error: function(error){
@@ -194,6 +184,58 @@ $(document).ready(function(){
       }  
     });  
   }
+
+  function itemsLoad(){
+    $.ajax({  
+      url: APIURL + 'home/firstitems',  
+      type: 'GET', 
+      beforeSend: function (xhr){ 
+          xhr.setRequestHeader('Authorization',accessToken); 
+      }, 
+      success: function(data) {  
+        $("#item-list").html('');
+        var itemList = "";
+        $.each(data,function(index,val){
+          itemList +="<li id="+ val._id +"><div class='row'><div class='col-sm-9'><textarea class='additem form-control' disabled style='height: 40px;'>"+ val.items +"</textarea></div> <div class='col-sm-3'><button type='button' class='btn-2 row-edit-btn' id="+ val._id +" >Edit</button> <button type='button' class='btn-2 row-update-btn' id="+ val._id +" style='display:none;'>Update</button> <button type='button' class='btn-1 row-delete-btn'  id="+ val._id +" >Delete</button></div></div></li>"                       
+        });  
+        $("#item-list").append(itemList);
+      },
+      error: function(error){
+        console.log(error)  
+      }  
+    });            
+  }
+
+  $("#visible").change(function(){
+    var currentID = $(this).attr('data-id')
+    $("#loader").show();
+    if($(this).prop('checked') == true){
+      checkedVisibile = true;
+    }
+    else{
+      checkedVisibile = false;
+    }
+    var data = {
+      'visible':checkedVisibile    
+    }
+
+    $.ajax({  
+        url: APIURL + 'home/first/'+currentID,  
+        type: 'PATCH',  
+        beforeSend: function (xhr){ 
+          xhr.setRequestHeader('Authorization',accessToken); 
+        },
+        data : JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(data) {                      
+          $("#loader").hide();   
+          loadData();
+        },
+        error: function(error){
+          console.log(error)  
+        }  
+    }); 
+  });
 
   $("#add-image").change(function(){
     $("#loader").show();  
@@ -218,27 +260,6 @@ $(document).ready(function(){
       } 
     }); 
   });
-
-  function itemsLoad(){
-    $.ajax({  
-      url: APIURL + 'home/firstitems',  
-      type: 'GET', 
-      beforeSend: function (xhr){ 
-          xhr.setRequestHeader('Authorization',accessToken); 
-      }, 
-      success: function(data) {  
-        $("#item-list").html('');
-        var itemList = "";
-        $.each(data,function(index,val){
-          itemList +="<li id="+ val._id +"><div class='row'><div class='col-sm-9'><textarea class='additem form-control' disabled style='height: 40px;'>"+ val.items +"</textarea></div> <div class='col-sm-3'><button type='button' class='btn-2 row-edit-btn' id="+ val._id +" >Edit</button> <button type='button' class='btn-2 row-update-btn' id="+ val._id +" style='display:none;'>Update</button> <button type='button' class='btn-1 row-delete-btn'  id="+ val._id +" >Delete</button></div></div></li>"                       
-        });  
-        $("#item-list").append(itemList);
-      },
-      error: function(error){
-        console.log(error)  
-      }  
-    });            
-  }
 
   $("#add-item-btn").click(function(){
       $("#loader").show();  
@@ -286,9 +307,10 @@ $(document).ready(function(){
     var currentID = $($that).attr('id');
     var currentData = $($that).closest('li').find('div textarea').val();
     $($that).closest('li').find('div input').prop('disabled', true);
+
     var data = {
-        'items':currentData       
-      }
+      'items':currentData       
+    }
 
     $.ajax({  
       url: APIURL + 'home/firstitems/'+currentID,  
@@ -325,7 +347,6 @@ $(document).ready(function(){
       });
   });
 
-
   $("#edit-btn").click(function(){
     $(this).hide();
     inputCheck(false);
@@ -342,37 +363,6 @@ $(document).ready(function(){
     $(".row-delete-btn").hide();
   });
   
-  $("#visible").change(function(){
-    var currentID = $(this).attr('data-id')
-    $("#loader").show();
-    if($(this).prop('checked') == true){
-      checkedVisibile = true;
-    }
-    else{
-      checkedVisibile = false;
-    }
-    var data = {
-      'visible':checkedVisibile    
-    }
-
-    $.ajax({  
-        url: APIURL + 'home/first/'+currentID,  
-        type: 'PATCH',  
-        beforeSend: function (xhr){ 
-          xhr.setRequestHeader('Authorization',accessToken); 
-        },
-        data : JSON.stringify(data),
-        contentType: 'application/json',
-        success: function(data) {                      
-          $("#loader").hide();   
-          loadData();
-        },
-        error: function(error){
-          console.log(error)  
-        }  
-    }); 
-  });
-
   $("#submit-btn").click(function(){
     var currentID = $(this).attr('data-id')
     $("#loader").show();
@@ -382,7 +372,6 @@ $(document).ready(function(){
     $("#submit-btn").show();
     
     var header = $("#header").val();
-    var image = $("#image").val();
     var content = $("#content").val();
 
     var data = {     
@@ -411,7 +400,7 @@ $(document).ready(function(){
   });
 
   function inputCheck(evt){
-    $("input , button").prop('disabled',evt);
+    $("input , button, textarea").prop('disabled',evt);
   }
 
   $("input").keydown(function(){

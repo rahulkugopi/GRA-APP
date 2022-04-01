@@ -52,7 +52,7 @@
         <div class="col-md-12 text-center">
           <h2 class="hdr">Few Step</h2>    
         </div>  
-        <div class="col-md-12">
+        <div class="col-md-10">
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
@@ -61,6 +61,14 @@
             </ol>
           </nav>
         </div>
+        <div class="col-md-2">
+          <div class="toggle-area-hdr">          
+            <label class="switch">
+              <input type="checkbox" id="visible" >
+              <span class="toggle-checkbox round"></span>
+            </label> 
+          </div>          
+        </div> 
       </div>
       
       <div class="inner-grd" id="inner-id">       
@@ -68,11 +76,7 @@
           <div class="col-md-12">
             <table class="table table-bordered">              
               <tbody>
-                <tr>
-                  <td>
-                    <label>Visiblity</label>
-                    <input type="checkbox" class="form-control" id="visible" />
-                  </td>
+                <tr>                
                   <td>
                     <label>Header</label>
                     <input type="text" class="form-control" id="header" />
@@ -153,7 +157,8 @@
           success: function(data) {          
               $.each(data,function(index,res){              
                 $("#loader").hide();
-                $("#inner-grid-details").html('');               
+                $("#inner-grid-details").html('');    
+                $("#visible").attr('data-id', res._id);           
                 if(res.visible == "true"){
                   $("#visible").prop('checked' , true);
                   checkedVisibile = "true";
@@ -182,7 +187,7 @@
             else{
               $("#nodatafound").hide();
             }
-            
+
             var itemList = "";
             $("#inner-grid-details").html('');
             $.each(data, function(index,val){              
@@ -214,6 +219,38 @@
           }
         });    
       }
+
+      $("#visible").change(function(){
+        var currentID = $(this).attr('data-id')
+        $("#loader").show();
+        if($(this).prop('checked') == true){
+          checkedVisibile = true;
+        }
+        else{
+          checkedVisibile = false;
+        }
+        var data = {
+          'visible':checkedVisibile    
+        }
+
+        $.ajax({  
+            url: APIURL + 'home/fewstep/'+currentID,  
+            type: 'PATCH',  
+            beforeSend: function (xhr){ 
+              xhr.setRequestHeader('Authorization',accessToken); 
+            },
+            data : JSON.stringify(data),
+            contentType: 'application/json',
+            success: function(data) {                      
+              $("#loader").hide();   
+              loadData();
+              itemsLoad();
+            },
+            error: function(error){
+              console.log(error)  
+            }  
+        }); 
+      });  
 
       $("#create-items-btn").click(function(){
         $("#loader").show();      
@@ -366,14 +403,7 @@
         $("input , button, textarea").prop('disabled',evt);
       }      
 
-      $("#visible").change(function(){
-        if($(this).prop('checked') == true){
-          checkedVisibile = true;
-        }
-        else{
-          checkedVisibile = false;
-        }
-      });      
+          
 
       $('input textarea').keyup(function(){
         $(this).removeClass('validation');

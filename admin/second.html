@@ -52,7 +52,7 @@
         <div class="col-md-12 text-center">
           <h2 class="hdr">Second Section</h2>    
         </div>  
-        <div class="col-md-12">
+        <div class="col-md-10">
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
@@ -61,6 +61,14 @@
             </ol>
           </nav>
         </div>
+        <div class="col-md-2">
+          <div class="toggle-area-hdr">          
+            <label class="switch">
+              <input type="checkbox" id="visible" >
+              <span class="toggle-checkbox round"></span>
+            </label> 
+          </div> 
+        </div>  
       </div>
       
       <div class="inner-grd" id="inner-id">       
@@ -68,11 +76,7 @@
           <div class="col-md-12">
             <table class="table table-bordered">              
               <tbody>
-                <tr>
-                  <td>
-                    <label>Visiblity</label>
-                    <input type="checkbox" class="form-control" id="visible" disabled/>
-                  </td>
+                <tr>                  
                   <td>
                     <label>Header</label>
                     <input type="text" class="form-control" id="header" disabled/>
@@ -152,6 +156,7 @@
                 $("#header").val(res.header);
                 $("#content").val(res.content);
                 $("#submit-btn").attr('data-id',res._id);
+                $("#visible").attr('data-id', res._id);
                 if(res.visible == "true"){
                   $("#visible").prop('checked' , true);
                   checkedVisibile = 'true';

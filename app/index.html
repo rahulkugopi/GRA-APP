@@ -421,31 +421,36 @@
           url: APIURL + 'home/fewreasons',  
           type: 'GET',  
           success: function(data) {            
-            $.each(data,function(index,res){
+            $.each(data,function(index,res){            
               if(res.visible == "true"){
                 $("#few-reasons-section").show();
               }
               else{
                 $("#few-reasons-section").hide();
-              }
-              
-              $("#few-reasons-hdr").html(res.mainheader);
-             
-              $("#few-reson-items").html('');
+              }              
+              $("#few-reasons-hdr").html(res.mainheader);                                                  
+            });
+          }
+        });
+
+
+        $.ajax({  
+          url: APIURL + 'home/fewreasonsitems',  
+          type: 'GET',  
+          success: function(data) {                   
+            $("#few-reson-items").html('');
               var itemList = "";
               itemList +="<div class='row'>"
-              $.each(res.grid,function(index,val){
+              $.each(data,function(index,val){
                 itemList +="<div class='col-md-4'>"
                 itemList +="<div class='landing-feature-item'>"
-                itemList +="<img src="+ val.gridimage +" alt=''>"
+                itemList +="<img src="+ ImageFilePath + 'fewreasons/' +  val.gridimage.fileName +" alt=''>"
                 itemList +="<h3>"+ val.gridheader +"</h3>"
                 itemList +="<p>"+ val.gridcontent +"</p>"
                 itemList +="</div></div>"                       
               });  
               itemList +="</div>"
-              $("#few-reson-items").append(itemList);              
-              
-            });
+              $("#few-reson-items").append(itemList);               
           }
         });
       }

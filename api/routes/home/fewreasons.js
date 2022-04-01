@@ -4,14 +4,13 @@ const fewreasonsDetails = require('../../model/home/fewreasons');
 const verifyTokens = require('../verifyTokens/verifyTokens');
 
 // Creating one
-router.post('/fewreasons/', async (req,res) => {
+router.post('/fewreasons/', verifyTokens, async (req,res) => {
     
     //create new banner
     const fewreasons = new fewreasonsDetails({
         visible: req.body.visible,
         mainheader: req.body.mainheader,
-        maincontent: req.body.maincontent,
-        grid:req.body.grid
+        maincontent: req.body.maincontent        
     });
    
     try {
@@ -43,7 +42,7 @@ router.get('/fewreasons/:id',  getFewReasons , (req,res) => {
 });
 
 // Updating one
-router.patch('/fewreasons/:id',  getFewReasons , async (req,res) => {
+router.patch('/fewreasons/:id',  verifyTokens, getFewReasons , async (req,res) => {
     
     if(req.body.visible != null){
         res.fewreasons.visible = req.body.visible;
@@ -54,10 +53,7 @@ router.patch('/fewreasons/:id',  getFewReasons , async (req,res) => {
     if(req.body.maincontent != null){
         res.fewreasons.maincontent = req.body.maincontent;
     }
-    if(req.body.grid != null){
-        res.fewreasons.grid = req.body.grid;
-    }
-
+        
     try {
        const updatedFewReasons = await res.fewreasons.save()
        res.json(updatedFewReasons) ;
@@ -67,7 +63,7 @@ router.patch('/fewreasons/:id',  getFewReasons , async (req,res) => {
 });
 
 // Deleting one
-router.delete('/fewreasons/:id',  getFewReasons, async (req,res) => {
+router.delete('/fewreasons/:id', verifyTokens, getFewReasons, async (req,res) => {
     try {
         await res.fewreasons.remove();
         res.json({ message: 'Deleted Users' });

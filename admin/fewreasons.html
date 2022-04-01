@@ -52,7 +52,7 @@
         <div class="col-md-12 text-center">
           <h2 class="hdr">Few Reasons</h2>    
         </div>  
-        <div class="col-md-12">
+        <div class="col-md-10">
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
@@ -61,38 +61,70 @@
             </ol>
           </nav>
         </div>
+        <div class="col-md-2">
+          <div class="toggle-area-hdr">          
+            <label class="switch">
+              <input type="checkbox" id="visible" >
+              <span class="toggle-checkbox round"></span>
+            </label> 
+          </div>          
+        </div>  
       </div>
       
-      <div class="inner-grd" id="inner-id">       
+      <div class="inner-grd" id="inner-id">    
+         
         <div class="row">
           <div class="col-md-12">
             <table class="table table-bordered">              
               <tbody>
-                <tr>
-                  <td>
-                    <label>Visiblity</label>
-                    <input type="checkbox" class="form-control" id="visible" disabled/>
-                  </td>
+                <tr>                 
                   <td>
                     <label>Header</label>
-                    <input type="text" class="form-control" id="header" disabled/>
+                    <input type="text" class="form-control" id="header" />
                   </td>                  
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <form enctype="multipart/form-data">
+                      <div class="row">                     
+                        <div class="col-md-12">
+                          <h2 style="margin:0px 0 15px 0;font-size: 16px;">Add Items</h2>
+                        </div>
+                        <div class="col-sm-6">
+                          <label>Grid Header</label>
+                          <input type="text" class="form-control" id="gridheader" name="gridheader"/>
+                        </div>
+                        <div class="col-sm-6">
+                          <label>Grid Image</label>
+                          <input type="file" class="form-control" id="gridimage" name="gridimage" style="padding: 3px;"/>
+                        </div>
+                        <div class="col-sm-12" style="margin:15px 0 0 0;">
+                          <label>Grid Content</label>
+                          <textarea class="form-control" id="gridcontent" name="gridcontent" style="padding: 3px;"></textarea>
+                        </div>
+                        <div class="col-sm-12" style="margin:15px 0 0 0;">
+                          <button type="button" class="btn-2" id="create-items-btn">Create Items</button>                        
+                          <button type="button" class="btn-1" id="cancel-btn">Cancel</button>               
+                        </div>                      
+                      </div>
+                    </form>
+                  </td>
                 </tr>
                 <tr>
                   <td colspan="2">                    
                     <div id="inner-grid-details"></div>                    
                   </td>
                 </tr>              
-                <tr>
-                  <td colspan="2">
-                    <button type="button" class="btn-2" id="submit-btn">Submit</button>
-                    <button type="button" class="btn-2" id="edit-btn">Edit</button>
-                    <button type="button" class="btn-1" id="cancel-btn">Cancel</button>
-                  </td>
-                </tr>
               </tbody>
-            </table>
+            </table>            
           </div>
+
+          <div class="col-md-12" id="nodatafound">
+            <div  style="margin: 35px 0 0 0;background: #e7e7e7;text-align: center;padding: 10px;">
+              <p style="margin:0px;">No data found!</p>
+            </div>            
+          </div>  
+
         </div>    
       </div>
       </div>
@@ -108,134 +140,276 @@
 <script>
 $(document).ready(function(){
 
+  var accessToken = localStorage.getItem('accessToken'); 
+
   loadData();
-  $("#submit-btn").hide();
+  itemsLoad();  
+  $("#nodatafound").hide();
   var checkedVisibile = "";
 
   function loadData(){
     $.ajax({  
       url: APIURL + 'home/fewreasons',  
       type: 'GET',  
-      success: function(data) {    
-          console.log(data)    
-          $.each(data,function(index,res){
-            $("#edit-btn").prop('disabled' , false);
-            $("#loader").hide();
-            $("#inner-grid-details").html('');
-            $("#header").val(res.mainheader);
-            $("#submit-btn").attr('data-id',res._id);
-            if(res.visible == "true"){
-              $("#visible").prop('checked' , true);
-              checkedVisibile = true;
-            }
-            else{
-              $("#visible").prop('checked' , false);
-              checkedVisibile = false;
-            }
-            
-            var itemList = "";
-            itemList +=""
-
-            $.each(res.grid, function(index,val){
-              
-              var rowCount = index+1
-
-              itemList +="<div style='margin:0 0 20px 0;' class='col-sm-12 few-inner-grid'><h1>Grid "+ rowCount +"</h1><table class='table'>"
-              itemList +="<tbody>"
-              itemList +="<tr>"
-              itemList +="<td><input type='text' class='form-control gridheader' value="+ val.gridheader +" disabled /></td>"
-              itemList +="<td><input type='text' class='form-control gridimage' value="+ val.gridimage +" disabled /></td>"
-              itemList +="</tr>"
-              itemList +="<tr>"
-              itemList +="<td colspan='2'><textarea class='form-control gridcontent' disabled>"+ val.gridcontent +"</textarea></td>"                 
-              itemList +="</tr>"
-              itemList +="</tbody>"
-              itemList +="</table></div>"                       
-            });  
-
-            $("#inner-grid-details").append(itemList);
-
-          })
+      success: function(data) {              
+        $("#loader").hide();
+        $.each(data,function(index,res){
+          $("#edit-btn").prop('disabled' , false);
+          $("#loader").hide();          
+          $("#visible").attr('data-id', res._id);
+          if(res.visible == "true"){
+            $("#visible").prop('checked' , true);
+            checkedVisibile = true;
+          }
+          else{
+            $("#visible").prop('checked' , false);
+            checkedVisibile = false;
+          }            
+        });
       },
       error: function(error){
-        console.log(error)  
+        console.log(error);
+        $("#loader").hide();
       }  
     });  
   }
 
-  $("#edit-btn").click(function(){
-    $(this).hide();
-    inputCheck(false);
-    $("#submit-btn").show();
-  });
+  function itemsLoad(){ 
+    $.ajax({  
+      url: APIURL + 'home/fewreasonsitems',  
+      type: 'GET',  
+      success: function(data) {  
+        if(data.length == "0"){
+          $("#loader").hide();
+          $("#nodatafound").show();
+        }
+        else{
+          $("#nodatafound").hide();
+        }
+        var itemList = "";
+        $("#inner-grid-details").html('');
+        $.each(data, function(index,val){              
+          var rowCount = index+1;           
+          itemList +="<div style='margin:0 0 20px 0;' class='col-sm-12 few-inner-grid' id='inner-"+ val._id +"'><table class='table'>"
+          itemList +="<tbody>"
+          itemList +="<tr>"
+          itemList +="<td colspan='3' style='font-weight:bold;background-color:#e9ecef;'>Grid "+ rowCount +"</td>"                   
+          itemList +="</tr>"
+          itemList +="</tbody>"
+          itemList +="<tr>"
+          itemList +="<td width='30%'><label>Header</label><textarea class='form-control gridheader "+ val._id +"' id='header"+ val._id +"' disabled style='height:40px;'>"+ val.gridheader +"</textarea></td>"
+          itemList +="<td width='30%'><div class='row'><div class='col-sm-12'><label>Image</label><input type='text' class='form-control gridimage' value="+ ImageFilePath + 'fewstep/' +val.gridimage.fileName +" disabled />"
+          itemList +="<label for='image"+ val._id +"' class='btn-2 btn-small' id='add-image-label' style='margin:10px 0 0 0;'>Image Change</label>"                                                      
+          itemList +="<input type='file' data-id='"+ val._id +"' id='image"+ val._id +"' class='file-hidden change-image' name='gridimage' /></div>"
+          itemList +="<div class='col-sm-12'><img src='"+ ImageFilePath + 'fewreasons/' +val.gridimage.fileName +"' style='margin:10px 0 0 0;height: 100px;object-fit: scale-down;width: 100%;'/>"
+          itemList +="</div>"
+          itemList +="</div></td>"
+          itemList +="<td width='40%'><label>Content</label><textarea class='form-control gridcontent "+ val._id +"' id='content"+ val._id +"' style='height:180px;' disabled>"+ val.gridcontent +"</textarea></td>"                 
+          itemList +="</tr>"
+          itemList +="<tr>"
+          itemList +="<td colspan='3'><button type='button' class='btn-2 row-update-btn' id="+ val._id +" style='display:none;'>Update</button> <button type='button' class='btn-2 row-edit-btn'  id="+ val._id +">Edit</button> <button type='button' class='btn-1 row-cancel-btn' id='"+ val._id +"'  style='display:none;'>Cancel</button> <button type='button' class='btn-1 row-delete-btn' id="+ val._id +">Delete</button></td>"
+          itemList +="</tr>"
+          itemList +="</tbody>"
+          itemList +="</table></div>"                       
+        });  
 
-  $("#cancel-btn").click(function(){
-    inputCheck(true);
-    loadData();
-    $("#submit-btn").hide();
-    $("#edit-btn").show();
-  });
-
-  function inputCheck(evt){
-    $("input , button, textarea").prop('disabled',evt);
+        $("#inner-grid-details").append(itemList);
+      }
+    });    
   }
 
-  
-
   $("#visible").change(function(){
+    var currentID = $(this).attr('data-id')
     if($(this).prop('checked') == true){
       checkedVisibile = "true";
     }
     else{
       checkedVisibile = "false";
+    }    
+    
+    $("#loader").show();
+      
+    var data = {
+      'visible':checkedVisibile    
     }
+
+    $.ajax({  
+        url: APIURL + 'home/fewreasons/'+currentID,  
+        type: 'PATCH',  
+        beforeSend: function (xhr){ 
+          xhr.setRequestHeader('Authorization',accessToken); 
+        },
+        data : JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(data) {                      
+          $("#loader").hide();   
+          loadData();
+        },
+        error: function(error){
+          console.log(error)  
+        }  
+    }); 
+
   });
 
-  $("#submit-btn").click(function(){
-      var currentID = $(this).attr('data-id')
-      $("#loader").show();
-      $(this).hide();
-      inputCheck(true);
-      $("#edit-btn").prop('disabled', false);
-      $("#submit-btn").show();
-      var arr = [];
-      var gridheader = "";
-      var gridcontent = "";
-      var gridimage = "";
-      var header = $("#header").val();
-
-      $("#inner-grid-details .few-inner-grid table tbody").each(function(){
-        gridheader = $(this).find('td input.gridheader').val();   
-        gridcontent = $(this).find('td textarea.gridcontent').val();   
-        gridimage = $(this).find('td input.gridimage').val();      
-        var y = {}
-        y['gridheader'] = gridheader
-        y['gridcontent'] = gridcontent
-        y['gridimage'] = gridimage
-        arr.push(y);                                                          
-      });
-      var data = {
-        'visible':checkedVisibile,
-        'mainheader': header, 
-        //'maincontent':'',
-        'grid':arr
+  $("#create-items-btn").click(function(){
+      $("#loader").show();      
+      var gridheader = $("#gridheader").val();
+      var gridimage = $("#gridimage")[0].files[0];
+      var gridcontent = $("#gridcontent").val();
+    
+      if(gridheader == ""){
+        $("#gridheader").addClass('validation');
+        $("#loader").hide();      
+        return;
       }
+      
+      if($("#gridimage").val() == ""){
+        $("#gridimage").addClass('validation');
+        $("#loader").hide();      
+        return;
+      }     
+      
+      if(gridcontent == ""){
+        $("#gridcontent").addClass('validation');
+        $("#loader").hide();      
+        return;
+      }   
+
+      var data = new FormData();
+      data.append('gridheader', gridheader);        
+      data.append('gridcontent', gridcontent);                
+      data.append('gridimage', gridimage);
 
       $.ajax({  
-          url: APIURL + 'home/fewreasons/'+currentID,  
+        url: APIURL + 'home/fewreasonsitems',  
+        type: 'POST',  
+        beforeSend: function (xhr){ 
+          xhr.setRequestHeader('Authorization',accessToken); 
+        },         
+        data : data,
+        contentType: false,
+        processData: false,
+        success: function(data) {  
+          $("#loader").hide();   
+          itemsLoad();   
+        },
+        error: function(error){
+          console.log(error);
+          $("#loader").hide();   
+        } 
+      }); 
+
+    });
+
+    $("#inner-grid-details").on('change', 'input.change-image', function(){
+        $("#loader").show();  
+        var currentID = $(this).attr('data-id');     
+        var imageFiles = $(this)[0].files[0];
+        var data = new FormData();
+        data.append('gridimage', imageFiles);
+
+        $.ajax({  
+          url: APIURL + 'home/fewreasonsitems/'+currentID,  
           type: 'PATCH',  
-          data : JSON.stringify(data),
-          contentType: 'application/json',
-          success: function(data) {                      
-            $("#loader").hide();   
-            $("#edit-btn").show();
-            $("#submit-btn").hide();
-            loadData();
+          beforeSend: function (xhr){ 
+            xhr.setRequestHeader('Authorization',accessToken); 
+          },
+          data : data,
+          contentType: false,
+          processData: false,
+          success: function(data) {  
+            $("#loader").hide();  
+            itemsLoad();                
           },
           error: function(error){
             console.log(error)  
-          }  
-      }); 
+          } 
+        });        
+    });
+
+    $("#inner-grid-details").on('click', 'button.row-edit-btn', function(){
+      var currentID = $(this).attr('id');        
+      $(this).hide();
+      $('.'+ currentID +'').prop('disabled', false);
+      $(this).closest('tr').find('td button.row-update-btn, button.row-cancel-btn').show();        
+    });
+
+    $("#inner-grid-details").on('click', 'button.row-cancel-btn', function(){
+      var currentID = $(this).attr('id');        
+      $(this).hide();
+      $('.'+ currentID +'').prop('disabled', true);
+      $(this).closest('tr').find('td button.row-edit-btn').show();
+      $(this).closest('tr').find('td button.row-update-btn').hide();        
+    });
+    
+    $("#inner-grid-details").on('click', 'button.row-update-btn', function(){
+      var currentID = $(this).attr('id');        
+      $(this).hide();
+      $('.'+ currentID +'').prop('disabled', true);
+      $(this).closest('tr').find('td button.row-edit-btn').show();
+      $(this).closest('tr').find('td button.row-update-btn, button.row-cancel-btn').hide();      
+
+      var header = $('#header'+ currentID +'').val();
+      var content = $('#content'+ currentID +'').val();       
+
+      var data = {
+        'gridheader':header,
+        'gridcontent':content        
+      }
+
+      $.ajax({  
+        url: APIURL + 'home/fewreasonsitems/'+currentID,  
+        type: 'PATCH',       
+        beforeSend: function (xhr){ 
+          xhr.setRequestHeader('Authorization',accessToken); 
+        },     
+        data : JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(data) {  
+          itemsLoad();
+          $("#loader").hide(); 
+        },    
+        error: function(error){
+          console.log(error)  
+        }  
+      });
+
+    });
+
+    $("#inner-grid-details").on('click', 'button.row-delete-btn', function(){
+        var currentID = $(this).attr('id');
+        $("#loader").show();  
+        $.ajax({  
+          url: APIURL + 'home/fewreasonsitems/'+currentID,  
+          type: 'DELETE', 
+          beforeSend: function (xhr){ 
+            xhr.setRequestHeader('Authorization',accessToken); 
+          },                 
+          success: function(data) {  
+            itemsLoad();
+            $("#loader").hide();                     
+          }
+        });
+    });
+
+    $("#edit-btn").click(function(){
+      $(this).hide();
+      inputCheck(false);      
+    });
+
+    $("#cancel-btn").click(function(){
+      inputCheck(true);
+      loadData();      
+      $("#edit-btn").show();
+    });
+
+    function inputCheck(evt){
+      $("input , button, textarea").prop('disabled',evt);
+    }  
+
+  $("#submit-btn").click(function(){
+      
 
   });                                                                                 
 

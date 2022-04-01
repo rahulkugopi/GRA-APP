@@ -114,6 +114,11 @@
             </table>
           </div>
 
+          <div class="col-md-12" id="nodatafound">
+            <div  style="margin: 35px 0 0 0;background: #e7e7e7;text-align: center;padding: 10px;">
+              <p style="margin:0px;">No data found!</p>
+            </div>            
+          </div> 
           
         </div>    
       </div>
@@ -138,6 +143,8 @@
       loadData();
       itemsLoad();    
       var checkedVisibile = "";
+      $("#nodatafound").hide();
+
 
       function loadData(){
         $.ajax({  
@@ -168,26 +175,36 @@
           url: APIURL + 'home/fewstepitems',  
           type: 'GET',  
           success: function(data) {  
+            if(data.length == "0"){
+              $("#loader").hide();
+              $("#nodatafound").show();
+            }
+            else{
+              $("#nodatafound").hide();
+            }
+            
             var itemList = "";
             $("#inner-grid-details").html('');
             $.each(data, function(index,val){              
               var rowCount = index+1;           
-              itemList +="<div style='margin:0 0 20px 0;' class='col-sm-12 few-inner-grid'><h1>Grid "+ rowCount +"</h1><table class='table'>"
+              itemList +="<div style='margin:0 0 20px 0;' class='col-sm-12 few-inner-grid' id='inner-"+ val._id +"'><table class='table'>"
               itemList +="<tbody>"
               itemList +="<tr>"
-              itemList +="<td><label>Header</label><input type='text' class='form-control gridheader' value="+ val.gridheader +" disabled /></td>"
-              itemList +="<td><div class='row'><div class='col-sm-10'><label>Image</label><input type='text' class='form-control gridimage' value="+ ImageFilePath + 'fewstep/' +val.gridimage.fileName +" disabled />"
+              itemList +="<td colspan='3' style='font-weight:bold;background-color:#e9ecef;'>Grid "+ rowCount +"</td>"                   
+              itemList +="</tr>"
+              itemList +="</tbody>"
+              itemList +="<tr>"
+              itemList +="<td width='30%'><label>Header</label><textarea class='form-control gridheader "+ val._id +"' id='header"+ val._id +"' disabled style='height:40px;'>"+ val.gridheader +"</textarea></td>"
+              itemList +="<td width='30%'><div class='row'><div class='col-sm-12'><label>Image</label><input type='text' class='form-control gridimage' value="+ ImageFilePath + 'fewstep/' +val.gridimage.fileName +" disabled />"
               itemList +="<label for='image"+ val._id +"' class='btn-2 btn-small' id='add-image-label' style='margin:10px 0 0 0;'>Image Change</label>"                                                      
               itemList +="<input type='file' data-id='"+ val._id +"' id='image"+ val._id +"' class='file-hidden change-image' name='gridimage' /></div>"
-              itemList +="<div class='col-sm-2'><img src='"+ ImageFilePath + 'fewstep/' +val.gridimage.fileName +"' width='90' style='margin:15px 0 0 0'/>"
+              itemList +="<div class='col-sm-12'><img src='"+ ImageFilePath + 'fewstep/' +val.gridimage.fileName +"' style='margin:10px 0 0 0;height: 100px;object-fit: scale-down;width: 100%;'/>"
               itemList +="</div>"
               itemList +="</div></td>"
+              itemList +="<td width='40%'><label>Content</label><textarea class='form-control gridcontent "+ val._id +"' id='content"+ val._id +"' style='height:180px;' disabled>"+ val.gridcontent +"</textarea></td>"                 
               itemList +="</tr>"
               itemList +="<tr>"
-              itemList +="<td colspan='2'><label>Content</label><textarea class='form-control gridcontent' disabled>"+ val.gridcontent +"</textarea></td>"                 
-              itemList +="</tr>"
-              itemList +="<tr>"
-              itemList +="<td colspan='2'><button type='button' class='btn-2 row-update-btn' id="+ val._id +" style='display:none;'>Update</button> <button type='button' class='btn-2 row-edit-btn'>Edit</button> <button type='button' class='btn-1 row-delete-btn' id="+ val._id +">Delete</button></td>"
+              itemList +="<td colspan='3'><button type='button' class='btn-2 row-update-btn' id="+ val._id +" style='display:none;'>Update</button> <button type='button' class='btn-2 row-edit-btn'  id="+ val._id +">Edit</button> <button type='button' class='btn-1 row-cancel-btn' id='"+ val._id +"'  style='display:none;'>Cancel</button> <button type='button' class='btn-1 row-delete-btn' id="+ val._id +">Delete</button></td>"
               itemList +="</tr>"
               itemList +="</tbody>"
               itemList +="</table></div>"                       
@@ -239,7 +256,6 @@
           success: function(data) {  
             $("#loader").hide();   
             itemsLoad();   
-            alert("sucessfully")
           },
           error: function(error){
             console.log(error)  
@@ -247,7 +263,6 @@
         }); 
 
       });
-
       
       $("#inner-grid-details").on('change', 'input.change-image', function(){
         $("#loader").show();  
@@ -267,20 +282,78 @@
           processData: false,
           success: function(data) {  
             $("#loader").hide();  
-            itemsLoad();    
+            itemsLoad();                
           },
           error: function(error){
             console.log(error)  
           } 
-        }); 
+        });        
       });
 
       $("#inner-grid-details").on('click', 'button.row-edit-btn', function(){
         var currentID = $(this).attr('id');        
         $(this).hide();
         $('.'+ currentID +'').prop('disabled', false);
-        $(this).closest('tr').find('td button.row-update-btn').show();
+        $(this).closest('tr').find('td button.row-update-btn, button.row-cancel-btn').show();        
+      });
+      
+      $("#inner-grid-details").on('click', 'button.row-cancel-btn', function(){
+        var currentID = $(this).attr('id');        
+        $(this).hide();
+        $('.'+ currentID +'').prop('disabled', true);
+        $(this).closest('tr').find('td button.row-edit-btn').show();
+        $(this).closest('tr').find('td button.row-update-btn').hide();        
+      });      
+
+      $("#inner-grid-details").on('click', 'button.row-update-btn', function(){
+        var currentID = $(this).attr('id');        
+        $(this).hide();
+        $('.'+ currentID +'').prop('disabled', true);
+        $(this).closest('tr').find('td button.row-edit-btn').show();
+        $(this).closest('tr').find('td button.row-update-btn, button.row-cancel-btn').hide();      
+
+        var header = $('#header'+ currentID +'').val();
+        var content = $('#content'+ currentID +'').val();       
+
+        var data = {
+          'gridheader':header,
+          'gridcontent':content        
+        }
+
+        $.ajax({  
+          url: APIURL + 'home/fewstepitems/'+currentID,  
+          type: 'PATCH',       
+          beforeSend: function (xhr){ 
+            xhr.setRequestHeader('Authorization',accessToken); 
+          },     
+          data : JSON.stringify(data),
+          contentType: 'application/json',
+          success: function(data) {  
+            itemsLoad();
+            $("#loader").hide(); 
+          },    
+          error: function(error){
+            console.log(error)  
+          }  
+        });
+
       }); 
+
+      $("#inner-grid-details").on('click', 'button.row-delete-btn', function(){
+        var currentID = $(this).attr('id');
+        $("#loader").show();  
+        $.ajax({  
+          url: APIURL + 'home/fewstepitems/'+currentID,  
+          type: 'DELETE', 
+          beforeSend: function (xhr){ 
+            xhr.setRequestHeader('Authorization',accessToken); 
+          },                 
+          success: function(data) {  
+            itemsLoad();
+            $("#loader").hide();                     
+          }
+        });
+    });
 
 
 

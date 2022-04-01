@@ -53,7 +53,7 @@
         <div class="col-md-12 text-center">
           <h2 class="hdr">First Section</h2>    
         </div>  
-        <div class="col-md-12">
+        <div class="col-md-10">
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
@@ -62,6 +62,14 @@
             </ol>
           </nav>
         </div>
+        <div class="col-md-2">
+          <div class="toggle-area-hdr">          
+            <label class="switch">
+              <input type="checkbox" id="visible" >
+              <span class="toggle-checkbox round"></span>
+            </label> 
+          </div>          
+        </div> 
       </div>
       
       <div class="inner-grd" id="inner-id">       
@@ -70,11 +78,7 @@
             <form enctype="multipart/form-data">
               <table class="table table-bordered">              
                 <tbody>
-                  <tr>
-                    <td>
-                      <label>Visiblity</label>
-                      <input type="checkbox" class="form-control" id="visible" disabled/>
-                    </td>
+                  <tr>                   
                     <td>
                       <label>Header</label>
                       <input type="text" class="form-control" id="header" disabled/>
@@ -172,6 +176,7 @@ $(document).ready(function(){
             $("#content").val(res.content);
             $("#submit-btn").attr('data-id',res._id);
             $("#inner-id").attr('data-id',res._id);
+            $("#visible").attr('data-id', res._id);
             if(res.visible == "true"){
               $("#visible").prop('checked' , true);
               checkedVisibile = "true";
@@ -338,12 +343,34 @@ $(document).ready(function(){
   });
   
   $("#visible").change(function(){
+    var currentID = $(this).attr('data-id')
+    $("#loader").show();
     if($(this).prop('checked') == true){
       checkedVisibile = true;
     }
     else{
       checkedVisibile = false;
     }
+    var data = {
+      'visible':checkedVisibile    
+    }
+
+    $.ajax({  
+        url: APIURL + 'home/first/'+currentID,  
+        type: 'PATCH',  
+        beforeSend: function (xhr){ 
+          xhr.setRequestHeader('Authorization',accessToken); 
+        },
+        data : JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(data) {                      
+          $("#loader").hide();   
+          loadData();
+        },
+        error: function(error){
+          console.log(error)  
+        }  
+    }); 
   });
 
   $("#submit-btn").click(function(){
@@ -358,8 +385,7 @@ $(document).ready(function(){
     var image = $("#image").val();
     var content = $("#content").val();
 
-    var data = {
-      'visible':checkedVisibile,
+    var data = {     
       'header': header, 
       'content' : content
     }

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const fewstepItemsDetails = require('../../model/home/fewstepitems');
+const fewreasonsItemsDetails = require('../../model/home/fewreasonsitems');
 const verifyTokens = require('../verifyTokens/verifyTokens');
 const multer = require('multer');
 
@@ -10,7 +10,7 @@ const date = Date.now();
 const storage = multer.diskStorage({
     // destination for file
     destination:function(reqest,file,callback){
-        callback(null,'../uploads/fewstep');
+        callback(null,'../uploads/fewreasons');
     },
 
     //add back the extension
@@ -28,11 +28,11 @@ const upload = multer({
     }
 });
 // Creating one
-router.post('/fewstepitems/', upload.single('gridimage'), verifyTokens, async (req,res) => {
+router.post('/fewreasonsitems/', upload.single('gridimage'), verifyTokens, async (req,res) => {
     
     //create new items
     const originalName = req.file.originalname.split(' ').join('');
-    const fewstepitems = new fewstepItemsDetails({
+    const fewreasonsitems = new fewreasonsItemsDetails({        
         gridheader: req.body.gridheader,
         gridcontent: req.body.gridcontent,        
         gridimage: {
@@ -43,8 +43,8 @@ router.post('/fewstepitems/', upload.single('gridimage'), verifyTokens, async (r
     });
    
     try {
-        const newFewStepItems = await fewstepitems.save();
-        res.status(201).json(newFewStepItems);
+        const newFewReasonsItems = await fewreasonsitems.save();
+        res.status(201).json(newFewReasonsItems);
     } catch (error) {
       res.status(400).json({message : error});   
     }
@@ -52,71 +52,71 @@ router.post('/fewstepitems/', upload.single('gridimage'), verifyTokens, async (r
 });
 
 // Getting all
-router.get('/fewstepitems/', async (req,res) => {
+router.get('/fewreasonsitems/', async (req,res) => {
     try {
-        const fewstepitems = await fewstepItemsDetails.find();
-        res.json(fewstepitems);
+        const fewreasonsitems = await fewreasonsItemsDetails.find();
+        res.json(fewreasonsitems);
     } catch (error) {
         res.status(500).json({ message: error.message});
     }
 });
 
 // Getting one
-router.get('/fewstepitems/:id',  getFewStepItems , (req,res) => {
+router.get('/fewreasonsitems/:id',  getFewReasons , (req,res) => {
     try {
-        res.json(res.fewstepitems);
+        res.json(res.fewreasonsitems);
     } catch (error) {
         res.status(500).json({ message: error.message});
     }
 });
 
 // Updating one
-router.patch('/fewstepitems/:id', upload.single('gridimage'), verifyTokens, getFewStepItems , async (req,res) => {
-
+router.patch('/fewreasonsitems/:id',  upload.single('gridimage'), verifyTokens, getFewReasons , async (req,res) => {
+    
     const originalName = req.file.originalname.split(' ').join('');
 
     if(req.body.gridheader != null){
-        res.fewstepitems.gridheader = req.body.gridheader;
+        res.fewreasonsitems.gridheader = req.body.gridheader;
     }
     if(req.body.gridcontent != null){
-        res.fewstepitems.gridcontent = req.body.gridcontent;
+        res.fewreasonsitems.gridcontent = req.body.gridcontent;
     }      
 
-    res.fewstepitems.gridimage = {
+    res.fewreasonsitems.gridimage = {
         data:req.file.filename,
         contentType:'image',
         fileName: date + '-' + originalName.toLowerCase()
     }
 
     try {
-       const updatedFewStep = await res.fewstepitems.save()
-       res.json(updatedFewStep) ;
+       const updatedFewReasonsItems = await res.fewreasonsitems.save()
+       res.json(updatedFewReasonsItems) ;
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 });
 
 // Deleting one
-router.delete('/fewstepitems/:id', verifyTokens,  getFewStepItems, async (req,res) => {
+router.delete('/fewreasonsitems/:id',  verifyTokens, getFewReasons, async (req,res) => {
     try {
-        await res.fewstepitems.remove();
+        await res.fewreasonsitems.remove();
         res.json({ message: 'Deleted Users' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 });
 
-async function getFewStepItems(req, res, next){
-    let fewstepitems
+async function getFewReasons(req, res, next){
+    let fewreasonsitems
     try {
-        fewstepitems = await fewstepItemsDetails.findById(req.params.id)
-        if(fewstepitems == null){
+        fewreasonsitems = await fewreasonsItemsDetails.findById(req.params.id)
+        if(fewreasonsitems == null){
             return res.status(404).json({ message: 'Cannot find subscriber' })
         }
     } catch (error) {
         return res.status(500).json({ message: error.message })
     }
-    res.fewstepitems = fewstepitems
+    res.fewreasonsitems = fewreasonsitems
     next();
 }
 

@@ -11,6 +11,9 @@
 </head>
 
 <body>
+  <div class="loading-section" id="loader">
+    <div class="loader"></div>
+  </div>
   <header>
     <nav class="navbar navbar-expand-lg container">
       <a class="navbar-brand" href="index.html"><img src="assets/img/logo-dark.svg" alt="logo"></a>
@@ -63,54 +66,72 @@
       <div class="inner-grd">       
         <div class="row">
           <div class="col-md-12">
-            <table class="table table-bordered">              
-              <tbody>
-                <tr>
-                  <td>
-                    <label>Header</label>
-                    <input type="text" class="form-control" />
-                  </td>
-                  <td>
-                    <label>Images</label>
-                    <input type="text" class="form-control" />
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2">
-                    <label>Content</label>
-                    <input type="text" class="form-control" />
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2">
-                    <div class="row">
-                      <div class="col-md-10">
-                        <label>Sub Item</label>
-                        <input type="text" class="form-control" />
-                        <div class="item-list">
-                          <ul>
-                            <li>Test Item</li>
-                          </ul>
-                        </div>
-                      </div>
-                      <div class="col-md-2">
-                        <button type="button" class="btn-2 add-item-btn">Add Item</button>
-                      </div>  
-                    </div>                                      
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2">
-                    <button type="button" class="btn-2">Submit</button>
-                    <button type="button" class="btn-2">Edit</button>
-                    <button type="button" class="btn-1">Cancel</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+            <form enctype="multipart/form-data">
+              <table class="table table-bordered">              
+                <tbody>
+                  <tr>
+                    <td class="text-center">
+                      <label class="switch" style="margin:12px 0 0 0;">
+                        <input type="checkbox" id="visible" >
+                        <span class="toggle-checkbox round"></span>
+                      </label>
+                    </td>
+                    <td>
+                      <label>Menu Name</label>
+                      <input type="text" class="form-control" id="menu"  name="menu"/>
+                    </td>
+                    <td>
+                      <label>Manu Path</label>
+                      <input type="text" class="form-control" id="filepath"  name="filepath" />
+                    </td>
+                    <td colspan="2">
+                      <label>File Name</label>
+                      <input type="text" class="form-control" id="filename"  name="filename" />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="3">
+                      <button type="button" class="btn-2" id="create-new">Create New Menu</button>                    
+                      <button type="button" class="btn-1" id="cancel-new">Cancel</button>
+                    </td>
+                  </tr>               
+                </tbody>
+              </table>
+            </form>
+          </div>        
         </div>
 
+        <div class="col-sm-12 nop">
+          <div class="col-md-12 nop">
+            <div class="hdr-item-det">
+              <h2>Menu Details</h2>                    
+              <p>Total Items : <span id="total-items"></span></p>
+            </div>                    
+          </div>
+
+          <div class="col-md-12 nop" style="margin:20px 0 0 0;">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th style="border-right: 1px solid #dee2e6!important;background-color: #e9ecef;color:#000;">#</th>
+                  <th style="border-right: 1px solid #dee2e6!important;background-color: #e9ecef;color:#000;">Actiev</th>
+                  <th style="border-right: 1px solid #dee2e6!important;background-color: #e9ecef;color:#000;">Menu Name</th>
+                  <th style="border-right: 1px solid #dee2e6!important;background-color: #e9ecef;color:#000;">Manu Path</th>
+                  <th style="border-right: 1px solid #dee2e6!important;background-color: #e9ecef;color:#000;">Menu File Name</th>
+                  <th style="background-color: #e9ecef;" width="25%"></th>
+                </tr>
+              </thead>
+              <tbody id="inner-grid-details"></tbody>
+            </table>       
+          </div>                
+        </div>
+
+
+        <div class="col-md-12" id="nodatafound">
+          <div  style="margin: 35px 0 0 0;background: #e7e7e7;text-align: center;padding: 10px;">
+            <p style="margin:0px;">No data found!</p>
+          </div>            
+        </div>  
        
 
       </div>
@@ -132,20 +153,169 @@
 <script>
 $(document).ready(function(){
 
+  var accessToken = localStorage.getItem('accessToken'); 
+
   loadData();
 
   function loadData(){
     $.ajax({  
-      url: APIURL + 'home/first',  
+      url: APIURL + 'home/menu',  
       type: 'GET',  
       success: function(data) {  
-         console.log(data)  
+        if(data.length == "0"){
+          $("#loader").hide();
+          $("#nodatafound").show();
+        }
+        else{
+          $("#nodatafound").hide();          
+        }
+
+        $("#loader").hide();
+        var itemList = "";
+        $("#inner-grid-details").html('');
+        var rowCount = "";
+        $.each(data, function(index,val){    
+          rowCount = index+1;         
+          itemList +="<tr>"
+          itemList +="<td>"+ rowCount +"</td>"
+          itemList +="<td>"
+          itemList +="<label class='switch' style='margin:5px 0 0 0;'>"
+          if(val.active == "true")  {
+            itemList +="<input type='checkbox' class='" + val._id + "' id='active" + val._id + "' checked disabled />"
+          }
+          else{
+            itemList +="<input type='checkbox' class='" + val._id + "' id='active" + val._id + "' disabled />"
+          }
+          itemList +="<span class='toggle-checkbox round'></span>"
+          itemList +="</label>"
+          itemList +="</td>"
+          itemList +="<td><textarea class='form-control " + val._id + "' id='menu" + val._id + "' disabled style='height:40px;'>"+ val.menu +"</textarea></td>"
+          itemList +="<td><textarea class='form-control " + val._id + "' id='filepath" + val._id + "' disabled style='height:40px;'>"+ val.filepath +"</textarea></td>"
+          itemList +="<td><textarea class='form-control " + val._id + "' id='filename" + val._id + "' disabled style='height:40px;'>"+ val.filename +"</textarea></td>"
+          itemList +="<td class='text-center'>"
+          itemList +="<button type='button' class='btn-2 row-update-btn' id='" + val._id + "' style='display:none;'>Update</button> "
+          itemList +="<button type='button' class='btn-2 row-edit-btn' id='" + val._id + "'>Edit</button> "
+          itemList +="<button type='button' class='btn-1 row-cancel-btn' id='" + val._id + "' style='display:none;'>Cancel</button> "          
+          itemList +="<button type='button' class='btn-1 row-delete-btn' id='" + val._id + "'>Delete</button>"
+          itemList +="</td>"
+          itemList +="</tr>"
+        });                  
+        $("#total-items").text(rowCount);
+        $("#inner-grid-details").append(itemList);
+         
       },
       error: function(error){
         console.log(error)  
       }  
     });  
   }
+
+  var checkedVisibile = "false";
+
+  $("#visible").change(function(){
+    if($(this).prop('checked') == true){
+      checkedVisibile = "true";
+    }
+    else{
+      checkedVisibile = "false";
+    }  
+  });
+
+  $("#create-new").click(function(){
+    $("#loader").show();   
+    var MenuName = $("#menu").val();
+    var FilePath = $("#filepath").val();
+    var FileName = $("#filename").val();
+    
+    var data = {     
+      'active':checkedVisibile,
+      'menu': MenuName,
+      'filepath': FilePath,
+      'filename': FileName     
+    }
+
+    $.ajax({  
+      url: APIURL + 'home/menu/',  
+      type: 'POST',  
+      beforeSend: function (xhr){ 
+          xhr.setRequestHeader('Authorization',accessToken); 
+      },
+      data : JSON.stringify(data),
+      contentType: 'application/json',
+      success: function(data) {          
+        loadData();
+        $("#loader").hide();   
+        $("#menu").val('');
+        $("#filepath").val('');
+        $("#filename").val('');  
+        $("#visible").prop('checked',  false);
+      },
+      error: function(error){
+        console.log(error)  
+      }  
+    });
+
+  });
+
+  $("#cancel-new").click(function(){
+    $("#menu").val('');
+    $("#filepath").val('');
+    $("#filename").val('');
+    $("#visible").prop('checked',  false);
+  });
+
+  $("#inner-grid-details").on('click', 'button.row-edit-btn', function(){
+    var currentID = $(this).attr('id');        
+    $(this).hide();
+    $('.'+ currentID +'').prop('disabled', false);
+    $(this).closest('tr').find('td button.row-update-btn, button.row-cancel-btn').show();        
+  });
+
+  $("#inner-grid-details").on('click', 'button.row-cancel-btn', function(){
+    var currentID = $(this).attr('id');        
+    $(this).hide();
+    $('.'+ currentID +'').prop('disabled', true);
+    $(this).closest('tr').find('td button.row-edit-btn').show(); 
+    $(this).closest('tr').find('td button.row-update-btn, button.row-cancel-btn').hide();        
+  });
+
+  $("#inner-grid-details").on('click', 'button.row-update-btn', function(){
+      var currentID = $(this).attr('id');        
+      $(this).hide();
+      $('.'+ currentID +'').prop('disabled', true);
+      $(this).closest('tr').find('td button.row-edit-btn').show();
+      $(this).closest('tr').find('td button.row-update-btn, button.row-cancel-btn').hide();      
+
+      var active = $('#active'+ currentID +'').prop('checked');
+      var menu = $('#menu'+ currentID +'').val(); 
+      var filepath = $('#filepath'+ currentID +'').val(); 
+      var filename = $('#filename'+ currentID +'').val();       
+
+      var data = {
+        'active':active,
+        'menu':menu,
+        'filepath':filepath,
+        'filename':filename        
+      }
+
+      $.ajax({  
+        url: APIURL + 'home/menu/'+currentID,  
+        type: 'PATCH',       
+        beforeSend: function (xhr){ 
+          xhr.setRequestHeader('Authorization',accessToken); 
+        },     
+        data : JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(data) {  
+          loadData();
+          $("#loader").hide(); 
+        },    
+        error: function(error){
+          console.log(error)  
+        }  
+      });
+
+    });
 
 });
 </script>  

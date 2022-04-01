@@ -22,6 +22,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use('/api/users', require('./routes/users/users'));
+app.use('/api/home/', require('./routes/home/menu'));
 app.use('/api/home/', require('./routes/home/banner'));
 app.use('/api/home/', require('./routes/home/first'));
 app.use('/api/home/', require('./routes/home/firstitems'));
